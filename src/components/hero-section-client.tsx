@@ -24,7 +24,7 @@ const chatSuggestions = [
     "Help me sell my current home",
 ];
 
-export function HeroSection() {
+export default function HeroSectionClient() {
     const [currentSuggestion, setCurrentSuggestion] = useState(0);
     const [chatMessage, setChatMessage] = useState("");
     const [chatHistory, setChatHistory] = useState([
