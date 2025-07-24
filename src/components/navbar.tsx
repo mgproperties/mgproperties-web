@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, X, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -40,9 +41,15 @@ export function Navbar() {
                             href="/"
                             className="flex items-center space-x-3 group"
                         >
-                            <div className="p-2 bg-gradient-to-br from-primary to-primary-600 rounded-2xl group-hover:scale-105 transition-transform shadow-lg">
+                            {/* <div className="p-2 bg-gradient-to-br from-primary to-primary-600 rounded-2xl group-hover:scale-105 transition-transform shadow-lg">
                                 <Home className="h-6 w-6 text-white" />
-                            </div>
+                            </div> */}
+                            <Image
+                                src="/mg-logo.png"
+                                alt="MG Properties Logo"
+                                width={80}
+                                height={80}
+                            />
                             <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                                 MG Properties
                             </span>

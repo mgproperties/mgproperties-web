@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
     Home,
     Phone,
@@ -30,9 +31,16 @@ export function Footer() {
                             href="/"
                             className="flex items-center space-x-3 group"
                         >
-                            <div className="p-3 bg-gradient-to-br from-primary to-primary-600 rounded-2xl group-hover:scale-105 transition-transform shadow-lg">
+                            {/* <div className="p-3 bg-gradient-to-br from-primary to-primary-600 rounded-2xl group-hover:scale-105 transition-transform shadow-lg">
                                 <Home className="h-8 w-8 text-white" />
-                            </div>
+                            </div> */}
+                            <Image
+                                src="/logo.png"
+                                alt="MG Properties Logo"
+                                width={80}
+                                height={80}
+                                className="rounded-lg"
+                            />
                             <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                                 MG Properties
                             </span>
