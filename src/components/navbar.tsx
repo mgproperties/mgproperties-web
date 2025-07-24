@@ -50,7 +50,7 @@ export function Navbar() {
                                 width={80}
                                 height={80}
                             />
-                            <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                            <span className="font-bold text-2xl text-primary bg-clip-text">
                                 MG Properties
                             </span>
                         </Link>
