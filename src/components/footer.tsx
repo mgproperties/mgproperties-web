@@ -24,7 +24,7 @@ export function Footer() {
             {/* Removed Newsletter Section */}
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
                     {/* Company Info */}
                     <div className="space-y-6">
                         <Link
@@ -51,21 +51,39 @@ export function Footer() {
                             years.
                         </p>
                         <div className="flex space-x-4">
-                            {[Facebook, Twitter, Instagram, Linkedin].map(
-                                (Icon, index) => (
-                                    <div
-                                        key={index}
-                                        className="p-3 bg-white/10 hover:bg-gradient-to-br hover:from-primary hover:to-accent rounded-2xl border border-white/20 hover:border-transparent transition-all cursor-pointer group shadow-sm hover:shadow-lg backdrop-blur-sm"
-                                    >
-                                        <Icon className="h-5 w-5 text-white/70 group-hover:text-white transition-colors" />
-                                    </div>
-                                )
-                            )}
+                            {[
+                                {
+                                    Icon: Facebook,
+                                    url: "https://www.facebook.com/mgpropertiesbw/",
+                                },
+                                {
+                                    Icon: Twitter,
+                                    url: "https://x.com/mgproperties_bw",
+                                },
+                                {
+                                    Icon: Instagram,
+                                    url: "https://www.instagram.com/",
+                                },
+                                {
+                                    Icon: Linkedin,
+                                    url: "https://bw.linkedin.com/company/mgproperties",
+                                },
+                            ].map(({ Icon, url }, index) => (
+                                <a
+                                    key={index}
+                                    href={url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="p-3 bg-white/10 hover:bg-gradient-to-br hover:from-primary hover:to-accent rounded-2xl border border-white/20 hover:border-transparent transition-all cursor-pointer group shadow-sm hover:shadow-lg backdrop-blur-sm"
+                                >
+                                    <Icon className="h-5 w-5 text-white/70 group-hover:text-white transition-colors" />
+                                </a>
+                            ))}
                         </div>
                     </div>
 
                     {/* Quick Links */}
-                    <div>
+                    <div className="text-center">
                         <h3 className="font-bold text-xl mb-6 text-white">
                             Quick Links
                         </h3>
@@ -80,7 +98,7 @@ export function Footer() {
                                 <li key={item.name} className="list-none">
                                     <Link
                                         href={item.href}
-                                        className="text-white/70 hover:text-accent transition-colors font-medium block"
+                                        className="text-white/70 hover:text-accent transition-colors font-medium block text-center"
                                     >
                                         {item.name}
                                     </Link>
@@ -90,7 +108,7 @@ export function Footer() {
                     </div>
 
                     {/* Services */}
-                    <div>
+                    {/* <div>
                         <h3 className="font-bold text-xl mb-6 text-white">
                             Services
                         </h3>
@@ -114,7 +132,7 @@ export function Footer() {
                                 </li>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Contact Info */}
                     <div>
@@ -127,9 +145,7 @@ export function Footer() {
                                     <MapPin className="h-5 w-5 text-accent" />
                                 </div>
                                 <div className="text-white/70 font-medium leading-relaxed">
-                                    123 Real Estate Avenue
-                                    <br />
-                                    Suite 100, City, State 12345
+                                    Plot 20695 Unit 7, Gaborone, Botswana
                                 </div>
                             </div>
                             <div className="flex items-center space-x-3">
@@ -137,7 +153,7 @@ export function Footer() {
                                     <Phone className="h-5 w-5 text-accent" />
                                 </div>
                                 <span className="text-white/70 font-medium">
-                                    (555) 123-4567
+                                    (+267) 3105497
                                 </span>
                             </div>
                             <div className="flex items-center space-x-3">
@@ -145,7 +161,7 @@ export function Footer() {
                                     <Mail className="h-5 w-5 text-accent" />
                                 </div>
                                 <span className="text-white/70 font-medium">
-                                    info@primerealty.com
+                                    info@mgproperties.co.bw
                                 </span>
                             </div>
                         </div>
@@ -155,7 +171,7 @@ export function Footer() {
                 <div className="border-t border-white/10 mt-12 pt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-white/60 font-medium text-center md:text-left">
-                            &copy; 2024 PrimeRealty. All rights reserved.
+                            &copy; 2025 MG Properties. All rights reserved.
                         </p>
                         <div className="flex items-center gap-6 text-sm">
                             <Link

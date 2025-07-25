@@ -7,8 +7,10 @@ import {
     Send,
     Bot,
     User,
+    UserRound,
     TrendingUp,
     Award,
+    Landmark,
     Users,
     ArrowRight,
     Star,
@@ -402,14 +404,8 @@ export default function HeroSectionClient() {
                     </div>
 
                     {/* Stats - Layered Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto animate-fade-in">
+                    <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto animate-fade-in">
                         {[
-                            {
-                                icon: TrendingUp,
-                                value: "500+",
-                                label: "Properties Sold",
-                                gradient: "from-primary to-primary-600",
-                            },
                             {
                                 icon: Award,
                                 value: "15+",
@@ -417,21 +413,38 @@ export default function HeroSectionClient() {
                                 gradient: "from-accent to-accent-600",
                             },
                             {
-                                icon: Users,
+                                icon: TrendingUp,
+                                value: "10 000+",
+                                label: "Valuations Conducted",
+                                gradient: "from-primary to-primary-600",
+                            },
+                            {
+                                icon: Landmark,
+                                value: "5000+",
+                                label: "Propeties Sold or Rented Out",
+                                gradient: "from-secondary to-secondary-600",
+                            },
+                            {
+                                icon: UserRound,
                                 value: "98%",
                                 label: "Client Satisfaction",
+                                gradient: "from-secondary to-secondary-600",
+                            },
+                            {
+                                icon: Users,
+                                value: "20 000+",
+                                label: "Clients",
                                 gradient: "from-secondary to-secondary-600",
                             },
                         ].map((stat, index) => (
                             <div
                                 key={index}
-                                className="group bg-white/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:shadow-2xl transition-all hover:scale-105 cursor-pointer relative overflow-hidden"
+                                className="group bg-white/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:shadow-2xl transition-all hover:scale-105 cursor-pointer relative overflow-hidden w-full max-w-sm flex-shrink-0 md:w-80"
                             >
                                 {/* Gradient overlay */}
                                 <div
                                     className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-5 transition-opacity rounded-3xl`}
                                 />
-
                                 <div className="relative z-10 text-center">
                                     <div className="flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl mx-auto mb-6 group-hover:scale-110 transition-transform">
                                         <stat.icon className="h-10 w-10 text-primary" />

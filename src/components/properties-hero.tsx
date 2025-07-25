@@ -43,9 +43,9 @@ export function PropertiesHero() {
 
                     {/* Editorial headline */}
                     <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tight leading-tight">
-                        Find Your Perfect
+                        Find the Perfect
                         <span className="block bg-gradient-to-r from-accent via-accent-600 to-accent-700 bg-clip-text text-transparent">
-                            Property
+                            Property!
                         </span>
                     </h1>
 

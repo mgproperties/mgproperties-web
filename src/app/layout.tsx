@@ -13,6 +13,10 @@ export const metadata: Metadata = {
     title: "MG Properties - your space, our expertise",
     description:
         "Find your dream home with MG Properties. Professional real estate services with comprehensive solutions tailored to your needs.",
+    icons: {
+        icon: "/favicon.ico",
+        apple: "/apple-touch-icon.png",
+    },
 };
 
 export default function RootLayout({
