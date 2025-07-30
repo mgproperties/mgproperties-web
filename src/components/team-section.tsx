@@ -1,8 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Mail, Phone, Linkedin } from "lucide-react";
-import { ArrowRight } from "lucide-react";
 import React from "react";
-import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const teamMembers = [
     {
@@ -45,7 +44,7 @@ export function TeamSection() {
                     <h2 className="text-4xl md:text-6xl font-bold mb-6 text-slate-800 leading-tight">
                         Visionary Leadership
                         <span className="block bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                            Behind PrimeRealty
+                            Behind MG Properties
                         </span>
                     </h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-accent to-primary mx-auto mb-8" />
@@ -64,13 +63,17 @@ export function TeamSection() {
                                 {/* Left Column - Image */}
                                 <div className="relative">
                                     <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-                                        <img
+                                        <Image
                                             src={
                                                 member.image ||
                                                 "/placeholder.svg"
                                             }
                                             alt={member.name}
+                                            width={400}
+                                            height={500}
                                             className="w-full h-[500px] object-cover"
+                                            style={{ objectFit: "cover" }}
+                                            priority
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
