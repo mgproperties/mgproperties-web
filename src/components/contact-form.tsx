@@ -60,8 +60,10 @@ export function ContactForm() {
             newErrors.email = "Please enter a valid email";
         }
 
-        if (formData.phone.trim() && formData.phone.replace(/\D/g, '').length < 7) {
-            newErrors.phone = "Phone number too short";
+        const phoneRegex = /^\+?[1-9][0-9]{7,14}$/;
+
+        if (formData.phone.trim() && !phoneRegex.test(formData.phone.trim())) {
+            newErrors.phone = "Enter valid phone number";
         }
 
         if (!formData.message.trim()) {
@@ -340,7 +342,7 @@ export function ContactForm() {
                                             className={`w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md resize-none ${
                                                 errors.message ? 'border-red-300 bg-red-50' : 'border-gray-200'
                                             }`}
-                                            required
+                                            /* required */
                                         />
                                         {errors.message && <p className="text-red-600 text-sm mt-1">{errors.message}</p>}
                                     </div>
