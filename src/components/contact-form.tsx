@@ -16,6 +16,13 @@ import {
     DollarSign,
 } from "lucide-react";
 
+interface ValidationErrors {
+    name?: string;
+    email?: string;
+    phone?: string;
+    message?: string;
+}
+
 export function ContactForm() {
     const [formData, setFormData] = useState({
         name: "",
@@ -36,9 +43,51 @@ export function ContactForm() {
         message: "",    
     });
 
+    const [errors, setErrors] = useState<ValidationErrors>({});
+    
+    const validateForm = (): ValidationErrors => {
+        const newErrors: ValidationErrors = {};
+
+        if (!formData.name.trim()) {
+            newErrors.name = "Name is required";
+        } else if (formData.name.trim().length < 2) {
+            newErrors.name = "Name must be at least 2 characters";
+        }
+
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/\S+@\S+\.\S+/.test(formData.email)){
+            newErrors.email = "Please enter a valid email";
+        }
+
+        if (formData.phone.trim() && formData.phone.replace(/\D/g, '').length < 7) {
+            newErrors.phone = "Phone number too short";
+        }
+
+        if (!formData.message.trim()) {
+            newErrors.message = "Message is required";
+        } else if (formData.message.trim().length < 10) {
+            newErrors.message = "Message must be at least 10 characters";
+        }
+
+        return newErrors;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Handle form submission
+
+        const formErrors = validateForm();
+        setErrors(formErrors);
+
+        if (Object.keys(formErrors).length > 0){
+            setSubmitStatus({
+                type: 'error',
+                message: 'Please fix the errors above before submitting.'
+            });
+            return;
+        }
+
         setIsSubmitting(true);
         setSubmitStatus({
             type: null,
@@ -70,6 +119,7 @@ export function ContactForm() {
                     propertyType: "House",
                     budget: "P500K - P750K",
                 });
+                setErrors({});
             } else {
                 setSubmitStatus({
                     type: 'error',
@@ -133,6 +183,18 @@ export function ContactForm() {
                                     onSubmit={handleSubmit}
                                     className="space-y-6"
                                 >
+                                    {/* Status Messages */}
+                                    {submitStatus.type && (
+                                        <div className={`p-4 rounded-lg ${
+                                            submitStatus.type === 'success'
+                                            ? 'bg-green-50 text-green-700 border border-green-200'
+                                            : 'bg-red-50 text-red-700 border border-red-200'
+                                        }`}>
+                                            {submitStatus.message}
+                                        </div>
+                                    )}
+
+
                                     {/* Name and Email Row */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="relative">
@@ -143,9 +205,12 @@ export function ContactForm() {
                                                 placeholder="Your Full Name"
                                                 value={formData.name}
                                                 onChange={handleChange}
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md"
-                                                required
+                                                className={`w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md ${
+                                                    errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                                }`}
+                                                /* required */
                                             />
+                                            {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
                                         </div>
                                         <div className="relative">
                                             <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary h-5 w-5" />
@@ -155,9 +220,12 @@ export function ContactForm() {
                                                 placeholder="Your Email Address"
                                                 value={formData.email}
                                                 onChange={handleChange}
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md"
-                                                required
+                                                className={`w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md ${
+                                                    errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                                }`}
+                                                /* required */
                                             />
+                                            {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
                                         </div>
                                     </div>
 
@@ -171,8 +239,11 @@ export function ContactForm() {
                                                 placeholder="Your Phone Number"
                                                 value={formData.phone}
                                                 onChange={handleChange}
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md"
+                                                className={`w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md ${
+                                                    errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                                }`}
                                             />
+                                            {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
                                         </div>
                                         <div className="relative">
                                             <MessageSquare className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary h-5 w-5" />
@@ -266,19 +337,23 @@ export function ContactForm() {
                                             value={formData.message}
                                             onChange={handleChange}
                                             rows={6}
-                                            className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md resize-none"
+                                            className={`w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md resize-none ${
+                                                errors.message ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                            }`}
                                             required
                                         />
+                                        {errors.message && <p className="text-red-600 text-sm mt-1">{errors.message}</p>}
                                     </div>
 
                                     {/* Submit Button */}
                                     <Button
                                         type="submit"
+                                        disabled={isSubmitting}
                                         size="lg"
-                                        className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-6 text-xl font-semibold group"
+                                        className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-6 text-xl font-semibold group disabled:opacity-50"
                                     >
                                         <Send className="mr-3 h-6 w-6 group-hover:translate-x-1 transition-transform" />
-                                        Send Message
+                                        {isSubmitting ? 'Sending...' : 'Send Message'}
                                     </Button>
                                 </form>
                             </CardContent>
