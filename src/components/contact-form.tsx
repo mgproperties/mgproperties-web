@@ -217,7 +217,7 @@ export function ContactForm() {
                                         <div className="relative">
                                             <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-primary h-5 w-5" />
                                             <input
-                                                type="email"
+                                                type="text"
                                                 name="email"
                                                 placeholder="Your Email Address"
                                                 value={formData.email}
