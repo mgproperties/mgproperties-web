@@ -287,20 +287,17 @@ export function ContactForm() {
                                                 onChange={handleChange}
                                                 className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
                                             >
-                                                <option value="House">
-                                                    House
-                                                </option>
-                                                <option value="Condo">
-                                                    Condo
-                                                </option>
-                                                <option value="Townhouse">
-                                                    Townhouse
-                                                </option>
-                                                <option value="Villa">
-                                                    Villa
+                                                <option value="Residential">
+                                                    Residential
                                                 </option>
                                                 <option value="Commercial">
                                                     Commercial
+                                                </option>
+                                                <option value="Agricultural">
+                                                    Agricultural
+                                                </option>
+                                                <option value="Multi-residential">
+                                                    Mutli-residential
                                                 </option>
                                             </select>
                                         </div>
