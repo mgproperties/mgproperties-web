@@ -24,13 +24,67 @@ export function ContactForm() {
         subject: "General Inquiry",
         message: "",
         propertyType: "House",
-        budget: "$500K - $750K",
+        budget: "P500K - P750K",
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [ isSubmitting, setIsSubmitting ] = useState(false);
+    const [ submitStatus, setSubmitStatus ] = useState<{
+        type: "success" | "error" | null;
+        message: string;
+    }>({
+        type: null,
+        message: "",    
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         // Handle form submission
-        console.log("Form submitted:", formData);
+        setIsSubmitting(true);
+        setSubmitStatus({
+            type: null,
+            message: "",
+        });
+
+        try {
+            const response = await fetch('api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                setSubmitStatus({
+                    type: 'success',
+                    message: result.message
+                });
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    subject: "General Inquiry",
+                    message: "",
+                    propertyType: "House",
+                    budget: "P500K - P750K",
+                });
+            } else {
+                setSubmitStatus({
+                    type: 'error',
+                    message: result.error || 'An error occurred while submitting the form.'
+                });
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            setSubmitStatus({
+                type: 'error',
+                message: 'An unexpected error occurred. Please try again later.'
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleChange = (

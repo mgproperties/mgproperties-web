@@ -58,19 +58,6 @@ export async function POST(request: NextRequest) {
             RETURNING *;
         `;
 
-        
-
-        // Log the form submission (in production, you'd save to database)
-        console.log('New contact form submission:', {
-            name: body.name,
-            email: body.email,
-            phone: body.phone,
-            subject: body.subject,
-            message: body.message,
-            propertyType: body.propertyType,
-            budget: body.budget,
-            timestamp: new Date().toISOString()
-        });
 
         //simulate processing delay
         await new Promise(resolve => setTimeout(resolve, 1000));
