@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import sql from "@/lib/db"; // Import the database connection
 
 //Define the shape of form data
 
@@ -14,6 +15,8 @@ interface ContactFormData {
 
 export async function POST(request: NextRequest) {
     try {
+        
+        
         // Parse the JSON body from the request
         const body: ContactFormData = await request.json();
 
@@ -34,21 +37,28 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        /* const insertQuery = `
+        const result = await sql`
             INSERT INTO public.inquiry (
                 "fullName",
                 "email",
-                "message"
-            ) VALUES ($1, $2, $3)
-             RETURNING "inquiryID";
+                "phone",
+                "message",
+                "budget",
+                "propertyType",
+                "subject"
+            ) VALUES (
+                ${body.name},
+                ${body.email},
+                ${body.phone},
+                ${body.message},
+                ${body.budget},
+                ${body.propertyType},
+                ${body.subject}
+            )
+            RETURNING *;
         `;
 
-        const values = [body.name, body.email, body.message];
-
-        const result = await query(insertQuery, values);
-        const inquiryID = result.rows[0].inquiryID;
-
-        console.log(`New inquiry created with ID: ${inquiryID}`); */
+        
 
         // Log the form submission (in production, you'd save to database)
         console.log('New contact form submission:', {
@@ -83,8 +93,20 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { message: 'Contact API is working!' },
-    { status: 200 }
-  );
+
+    //testing db connection
+    try {
+        const result = await sql`SELECT * FROM  public.inquiry;`;
+        console.log('Database connection successful:', result);
+        return NextResponse.json(
+            { message: "Database connection successful.", result },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.error('Database connection error:', error);
+        return NextResponse.json(
+            { error: "Database connection failed." },
+            { status: 500 }
+        );
+    }
 }
