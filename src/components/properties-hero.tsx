@@ -86,10 +86,10 @@ export function PropertiesHero() {
                             </label>
                             <select className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer">
                                 <option value="">All Types</option>
-                                <option value="house">House</option>
-                                <option value="condo">Condo</option>
-                                <option value="townhouse">Townhouse</option>
-                                <option value="villa">Villa</option>
+                                <option value="house">Residential</option>
+                                <option value="condo">Commercial</option>
+                                <option value="townhouse">Multi-residential</option>
+                                <option value="villa">Agricultural</option>
                             </select>
                             <ChevronDown className="absolute right-4 top-1/2 transform translate-y-1 text-gray-500 h-5 w-5 pointer-events-none" />
                         </div>
@@ -101,17 +101,17 @@ export function PropertiesHero() {
                             </label>
                             <select className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer">
                                 <option value="">Any Price</option>
-                                <option value="0-500000">Under $500K</option>
+                                <option value="0-500000">Under P500K</option>
                                 <option value="500000-750000">
-                                    $500K - $750K
+                                    P500K - P750K
                                 </option>
                                 <option value="750000-1000000">
-                                    $750K - $1M
+                                    P750K -P1M
                                 </option>
                                 <option value="1000000-2000000">
-                                    $1M - $2M
+                                    P1M - P2M
                                 </option>
-                                <option value="2000000+">$2M+</option>
+                                <option value="2000000+">P2M+</option>
                             </select>
                             <ChevronDown className="absolute right-4 top-1/2 transform translate-y-1 text-gray-500 h-5 w-5 pointer-events-none" />
                         </div>
