@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,110 +17,93 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const properties = [
-    {
-        id: 1,
-        title: "Modern Family Home",
-        price: "$750,000",
-        originalPrice: "$780,000",
-        location: "Beverly Hills, CA",
-        beds: 4,
-        baths: 3,
-        sqft: "2,500",
-        images: ["/placeholder.svg?height=300&width=400"],
-        imageCount: 12,
-        status: "For Sale",
-        featured: true,
-        daysOnMarket: 5,
-        priceReduced: true,
-        openHouse: "Sat 2-4 PM",
-        description:
-            "Stunning modern home with open floor plan and premium finishes throughout.",
-    },
-    {
-        id: 2,
-        title: "Downtown Luxury Condo",
-        price: "$1,200,000",
-        location: "Manhattan, NY",
-        beds: 2,
-        baths: 2,
-        sqft: "1,800",
-        images: ["/placeholder.svg?height=300&width=400"],
-        imageCount: 8,
-        status: "New Listing",
-        featured: false,
-        daysOnMarket: 1,
-        description:
-            "Luxury high-rise condo with breathtaking city views and premium amenities.",
-    },
-    {
-        id: 3,
-        title: "Suburban Villa",
-        price: "$950,000",
-        location: "Austin, TX",
-        beds: 5,
-        baths: 4,
-        sqft: "3,200",
-        images: ["/placeholder.svg?height=300&width=400"],
-        imageCount: 15,
-        status: "For Sale",
-        featured: true,
-        daysOnMarket: 12,
-        description:
-            "Spacious villa with large backyard, perfect for families.",
-    },
-    {
-        id: 4,
-        title: "Waterfront Townhouse",
-        price: "$1,450,000",
-        location: "Miami Beach, FL",
-        beds: 3,
-        baths: 3,
-        sqft: "2,200",
-        images: ["/placeholder.svg?height=300&width=400"],
-        imageCount: 10,
-        status: "For Sale",
-        featured: false,
-        daysOnMarket: 8,
-        openHouse: "Sun 1-3 PM",
-        description:
-            "Beautiful waterfront townhouse with private dock and stunning views.",
-    },
-    {
-        id: 5,
-        title: "Contemporary Loft",
-        price: "$680,000",
-        location: "Seattle, WA",
-        beds: 2,
-        baths: 2,
-        sqft: "1,600",
-        images: ["/placeholder.svg?height=300&width=400"],
-        imageCount: 6,
-        status: "For Sale",
-        featured: false,
-        daysOnMarket: 3,
-        description:
-            "Industrial-chic loft in trendy neighborhood with exposed brick and high ceilings.",
-    },
-    {
-        id: 6,
-        title: "Mountain View Estate",
-        price: "$2,100,000",
-        location: "Aspen, CO",
-        beds: 6,
-        baths: 5,
-        sqft: "4,800",
-        images: ["/placeholder.svg?height=300&width=400"],
-        imageCount: 20,
-        status: "For Sale",
-        featured: true,
-        daysOnMarket: 18,
-        description:
-            "Luxury mountain estate with panoramic views and world-class amenities.",
-    },
-];
+interface PropertyData {
+    propertyID: number;
+    title: string;
+    price: string;
+    originalPrice: string;
+    location: string;
+    beds: number;
+    baths: number;
+    sqm: number;
+    images: string[];
+    imageCount: number;
+    status: string;
+    featured: boolean;
+    listedOn: string;
+    daysOnMarket: number;
+    priceReduced: boolean;
+    description: string;
+    openHouse: string;
+}
+
+function calculateDays(timestamp: string): number {
+    const inputDate = new Date(timestamp);
+    const today = new Date();
+
+    // Convert both to UTC midnight to ignore time differences
+    const utcInput = Date.UTC(
+        inputDate.getUTCFullYear(),
+        inputDate.getUTCMonth(),
+        inputDate.getUTCDate()
+    );
+
+    const utcToday = Date.UTC(
+        today.getUTCFullYear(),
+        today.getUTCMonth(),
+        today.getUTCDate()
+    );
+
+    const millisecondsPerDay = 1000 * 60 * 60 * 24;
+    const diff = Math.floor((utcToday - utcInput) / millisecondsPerDay);
+
+    return diff + 1;
+}
 
 export function PropertiesGrid() {
+
+
+
+    const [properties, setProperties] = useState<PropertyData[]>([]);
+
+    const fetchProperties = async () => {
+        try {
+            const response = await fetch('api/properties', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result: PropertyData[] = await response.json();
+
+            if (response.ok) {
+                const updatedProperties = result.map((property) => ({
+                    ...property,
+                    daysOnMarket: calculateDays(property.listedOn)
+                }));
+                setProperties(updatedProperties);
+            }
+        } catch (error) {
+            console.error("Error fetching properties: ", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchProperties();
+    }, []);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const propertiesPerPage = 6;
+
+    const totalPages = Math.ceil(properties.length / propertiesPerPage);
+    const paginatedProperties = properties.slice(
+        (currentPage - 1) * propertiesPerPage,
+        currentPage * propertiesPerPage
+    );
+
+
+
     return (
         <section className="py-24 bg-gradient-to-b from-green-50/30 to-slate-50 relative overflow-hidden">
             {/* Soft background elements */}
@@ -129,15 +115,15 @@ export function PropertiesGrid() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 {/* Properties Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {properties.map((property, index) => (
+                    {paginatedProperties.map((property, index) => (
                         <Card
-                            key={property.id}
+                            key={property.propertyID}
                             className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white rounded-3xl hover:scale-[1.02] cursor-pointer"
                         >
                             <div className="relative overflow-hidden">
                                 <img
                                     src={
-                                        property.images[0] || "/placeholder.svg"
+                                        property.images?.[0] || "/placeholder.svg"
                                     }
                                     alt={property.title}
                                     className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
@@ -171,7 +157,7 @@ export function PropertiesGrid() {
                                 {/* Image Count */}
                                 <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-xl text-sm font-medium flex items-center">
                                     <Camera className="h-3 w-3 mr-1" />
-                                    {property.imageCount}
+                                    {property?.imageCount || 0}
                                 </div>
 
                                 {/* Action buttons */}
@@ -199,7 +185,7 @@ export function PropertiesGrid() {
                                         {property.location}
                                     </span>
                                     <span className="ml-auto text-xs bg-gray-100 px-2 py-1 rounded-lg">
-                                        {property.daysOnMarket} days
+                                        {property.daysOnMarket} {property.daysOnMarket === 1 ? 'day' : 'days'}
                                     </span>
                                 </div>
 
@@ -242,7 +228,7 @@ export function PropertiesGrid() {
                                     <div className="flex items-center bg-gradient-to-r from-primary/5 to-accent/5 px-3 py-2 rounded-xl">
                                         <Square className="h-4 w-4 mr-2 text-primary" />
                                         <span className="text-sm font-semibold">
-                                            {property.sqft} sqft
+                                            {property.sqm} sqm
                                         </span>
                                     </div>
                                 </div>
@@ -260,7 +246,7 @@ export function PropertiesGrid() {
                                     asChild
                                     className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-3 font-semibold group"
                                 >
-                                    <Link href={`/properties/${property.id}`}>
+                                    <Link href={`/properties/${property.propertyID}`}>
                                         View Details
                                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                     </Link>
@@ -276,15 +262,23 @@ export function PropertiesGrid() {
                         <div className="text-slate-600">
                             Showing{" "}
                             <span className="font-semibold text-primary">
-                                1-6
+                                {(currentPage - 1) * propertiesPerPage + 1}
+                            </span>{" "}
+                            to{" "}
+                            <span className="font-semibold text-primary">
+                                {Math.min(currentPage * propertiesPerPage, properties.length)}
                             </span>{" "}
                             of{" "}
                             <span className="font-semibold text-primary">
-                                247
+                                {properties.length}
                             </span>{" "}
                             properties
                         </div>
                         <Button
+                            onClick={() => {
+                                if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+                            }}
+                            disabled={currentPage >= totalPages}
                             size="lg"
                             variant="outline"
                             className="border-2 border-primary/30 text-slate-700 hover:bg-primary hover:text-white transition-all px-8 py-4 text-lg rounded-2xl font-semibold shadow-lg hover:shadow-xl bg-transparent"
@@ -292,23 +286,26 @@ export function PropertiesGrid() {
                             Load More Properties
                             <ArrowRight className="ml-2 h-5 w-5" />
                         </Button>
+
                     </div>
 
                     {/* Pagination */}
                     <div className="flex justify-center items-center gap-2 mt-8">
-                        {[1, 2, 3, "...", 41, 42].map((page, index) => (
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                             <Button
-                                key={index}
-                                variant={page === 1 ? "default" : "ghost"}
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                variant={page === currentPage ? "default" : "ghost"}
                                 size="sm"
                                 className={`w-10 h-10 rounded-xl font-semibold ${
-                                    page === 1
+                                    page === currentPage
                                         ? "bg-primary text-white shadow-lg"
                                         : "text-slate-600 hover:text-primary hover:bg-primary/5"
                                 }`}
                             >
                                 {page}
                             </Button>
+
                         ))}
                     </div>
                 </div>
