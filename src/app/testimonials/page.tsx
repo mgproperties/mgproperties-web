@@ -1,9 +1,9 @@
-import { Navbar } from "@/components/navbar";
-import { TestimonialsHero } from "@/components/testimonials-hero";
-import { TestimonialsGrid } from "@/components/testimonials-grid";
-import { VideoTestimonials } from "@/components/video-testimonials";
-import { TestimonialsStats } from "@/components/testimonials-stats";
-import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/layout/navbar";
+import { TestimonialsHero } from "@/components/testimonials/testimonials-hero";
+import { TestimonialsGrid } from "@/components/testimonials/testimonials-grid";
+import { VideoTestimonials } from "@/components/testimonials/video-testimonials";
+import { TestimonialsStats } from "@/components/testimonials/testimonials-stats";
+import { Footer } from "@/components/layout/footer";
 
 export default function TestimonialsPage() {
     return (

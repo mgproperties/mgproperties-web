@@ -1,7 +1,7 @@
-import { Navbar } from "@/components/navbar";
-import HeroSection from "@/components/hero-section-wrapper";
-import { FeaturedProperties } from "@/components/featured-properties";
-import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/layout/navbar";
+import HeroSection from "@/components/homepage/hero-section-wrapper";
+import { FeaturedProperties } from "@/components/homepage/featured-properties";
+import { Footer } from "@/components/layout/footer";
 
 export default function Page() {
     return (
