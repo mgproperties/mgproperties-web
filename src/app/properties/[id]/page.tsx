@@ -1,6 +1,6 @@
-import { Navbar } from "@/components/navbar";
-import { PropertyDetail } from "@/components/property-detail";
-import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/layout/navbar";
+import { PropertyDetail } from "@/components/properties/property-detail";
+import { Footer } from "@/components/layout/footer";
 
 // This is a placeholder for a real data fetch.
 // In a production app, you would fetch property data based on params.id
