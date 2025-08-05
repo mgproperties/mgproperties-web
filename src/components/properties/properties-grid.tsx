@@ -33,6 +33,7 @@ interface PropertyData {
     listedOn: string;
     daysOnMarket: number;
     priceReduced: boolean;
+    features: string[];
     description: string;
     openHouse: string;
 }
@@ -68,7 +69,7 @@ export function PropertiesGrid() {
 
     const fetchProperties = async () => {
         try {
-            const response = await fetch('api/properties/images', {
+            const response = await fetch('api/properties', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

@@ -17,20 +17,24 @@ import Image from "next/image";
 import { PropertyImageCarousel } from "./property-image-carousel"; // Import the new carousel component
 
 interface Property {
-    id: string;
+    propertyID: number;
     title: string;
     price: string;
+    originalPrice?: string;
     location: string;
     beds: number;
     baths: number;
-    sqm: string; // Changed from sqft
+    sqm: number;
     images: string[];
     imageCount: number;
     status: string;
-    dateListed: string;
-    propertyType: string;
-    description: string;
+    featured: boolean;
+    listedOn: string;
+    daysOnMarket?: number;
+    priceReduced: boolean;
     features: string[];
+    description: string;
+    openHouse?: string;
     agent: {
         name: string;
         role: string;
@@ -118,13 +122,13 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
                                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                                         <Bed className="h-6 w-6 text-primary" />
                                         <span className="font-semibold text-lg">
-                                            {property.beds} Bedrooms
+                                            {property.beds} {property.beds === 1 ? 'Bedroom' : 'Bedrooms'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                                         <Bath className="h-6 w-6 text-primary" />
                                         <span className="font-semibold text-lg">
-                                            {property.baths} Bathrooms
+                                            {property.baths} {property.baths === 1 ? 'Bathroom' : 'Bathrooms'}
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
@@ -133,16 +137,20 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
                                             {property.sqm} sqm
                                         </span>
                                     </div>
-                                    <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                    {/* <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                                         <Home className="h-6 w-6 text-primary" />
                                         <span className="font-semibold text-lg">
                                             {property.propertyType}
                                         </span>
-                                    </div>
+                                    </div> */}
                                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                                         <Calendar className="h-6 w-6 text-primary" />
                                         <span className="font-semibold text-lg">
-                                            Listed: {property.dateListed}
+                                            Listed: {new Date(property.listedOn).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'long', 
+                                                day: 'numeric'
+                                            })}
                                         </span>
                                     </div>
                                 </div>
@@ -191,29 +199,29 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
                                 </h3>
                                 <Image
                                     src={
-                                        property.agent.image ||
+                                        property.agent?.image ||
                                         "/placeholder.svg"
                                     }
-                                    alt={property.agent.name}
+                                    alt={property.agent?.name || "John Doe"}
                                     width={96}
                                     height={96}
                                     className="w-24 h-24 rounded-full mx-auto mb-4 object-cover ring-4 ring-primary/20"
                                 />
                                 <h4 className="text-xl font-bold text-slate-800 mb-1">
-                                    {property.agent.name}
+                                    {property.agent?.name || "John Doe"}
                                 </h4>
                                 <p className="text-primary font-semibold mb-6">
-                                    {property.agent.role}
+                                    {property.agent?.role || "Agent"}
                                 </p>
 
                                 <div className="space-y-4 mb-8">
                                     <div className="flex items-center justify-center gap-3 text-slate-700">
                                         <Phone className="h-5 w-5 text-primary" />
-                                        <span>{property.agent.phone}</span>
+                                        <span>{property.agent?.phone || "71234567"}</span>
                                     </div>
                                     <div className="flex items-center justify-center gap-3 text-slate-700">
                                         <Mail className="h-5 w-5 text-primary" />
-                                        <span>{property.agent.email}</span>
+                                        <span>{property.agent?.email || "info@mgproperties.co.bw"}</span>
                                     </div>
                                 </div>
 
