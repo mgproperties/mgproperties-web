@@ -9,8 +9,6 @@ const supabase = createClient(
 
 export async function GET() {
   try {
-    console.log('Fetching properties with images...');
-
     // This is a JOIN query - it gets properties AND their linked images in one go
     const { data: properties, error } = await supabase
       .from('property') // Main table
@@ -28,8 +26,6 @@ export async function GET() {
       console.error('Database error:', error);
       throw error;
     }
-
-    console.log(`Found ${properties?.length || 0} properties`);
 
     // Transform the data to make it frontend-friendly
     const propertiesWithImages = properties?.map((property: any) => {
@@ -60,8 +56,6 @@ export async function GET() {
         return data.publicUrl;
       });
 
-      console.log(`Property ${property.propertyID} has ${imageUrls.length} images`);
-
       return {
         ...property, // Keep all original property data
         images: imageUrls, // Add array of image URLs
@@ -71,7 +65,6 @@ export async function GET() {
       };
     }) || [];
 
-    console.log('Successfully processed all properties');
     return Response.json(propertiesWithImages);
 
   } catch (error) {
