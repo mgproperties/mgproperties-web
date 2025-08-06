@@ -1,67 +1,118 @@
 import { Navbar } from "@/components/layout/navbar";
 import { PropertyDetail } from "@/components/properties/property-detail";
 import { Footer } from "@/components/layout/footer";
+import { notFound } from 'next/navigation';
+import { headers } from "next/headers";
 
-// This is a placeholder for a real data fetch.
-// In a production app, you would fetch property data based on params.id
-const dummyProperty = {
-    id: "1",
-    title: "Elegant Suburban Oasis",
-    price: "$750,000",
-    location: "Beverly Hills, CA",
-    beds: 4,
-    baths: 3,
-    sqm: "232", // Approximately 2500 sqft
-    images: [
-        "/placeholder.svg?height=600&width=800",
-        "/placeholder.svg?height=400&width=600",
-        "/placeholder.svg?height=400&width=600",
-        "/placeholder.svg?height=400&width=600",
-        "/placeholder.svg?height=400&width=600",
-        "/placeholder.svg?height=400&width=600",
-    ],
-    imageCount: 6,
-    status: "For Sale",
-    dateListed: "July 1, 2024",
-    propertyType: "Single Family House",
-    description:
-        "Discover this exquisite modern family home nestled in a serene Beverly Hills neighborhood. Boasting an open-concept floor plan, this residence features high ceilings, abundant natural light, and premium finishes throughout. The gourmet kitchen is a chef's delight with state-of-the-art appliances and a large island. Enjoy seamless indoor-outdoor living with a spacious backyard, perfect for entertaining. Located in a top-rated school district with easy access to amenities and major highways. This property offers a perfect blend of luxury, comfort, and convenience, making it an ideal choice for families seeking an upscale lifestyle.",
-    features: [
-        "Gourmet Kitchen",
-        "Hardwood Floors",
-        "Smart Home System",
-        "Two-Car Garage",
-        "Landscaped Garden",
-        "Central Air Conditioning",
-        "Walk-in Closets",
-        "Private Patio",
-        "Energy Efficient Windows",
-    ],
+interface PropertyData {
+    propertyID: number;
+    title: string;
+    price: string;
+    originalPrice?: string;
+    location: string;
+    beds: number;
+    baths: number;
+    sqm: number;
+    images: string[];
+    imageCount: number;
+    status: string;
+    featured: boolean;
+    listedOn: string;
+    daysOnMarket?: number;
+    priceReduced: boolean;
+    features: string[];
+    description: string;
+    openHouse?: string;
     agent: {
-        name: "Sarah Mitchell",
-        role: "Senior Agent",
-        image: "/placeholder.svg?height=80&width=80",
-        phone: "(555) 123-4567",
-        email: "sarah@primerealty.com",
-    },
-};
+        name: string;
+        role: string;
+        image: string;
+        phone: string;
+        email: string;
+    };
+}
 
-export default function PropertyDetailPage({
+function calculateDays(timestamp: string): number {
+    const inputDate = new Date(timestamp);
+    const today = new Date();
+
+    // Convert both to UTC midnight to ignore time differences
+    const utcInput = Date.UTC(
+        inputDate.getUTCFullYear(),
+        inputDate.getUTCMonth(),
+        inputDate.getUTCDate()
+    );
+
+    const utcToday = Date.UTC(
+        today.getUTCFullYear(),
+        today.getUTCMonth(),
+        today.getUTCDate()
+    );
+
+    const millisecondsPerDay = 1000 * 60 * 60 * 24;
+    const diff = Math.floor((utcToday - utcInput) / millisecondsPerDay);
+
+    return diff + 1;
+}
+
+async function fetchProperty(propertyID: string): Promise<PropertyData | null> {
+    try {
+        
+        const headersList = headers();
+        const host = (await headersList).get('host');
+        const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+        const baseUrl = `${protocol}://${host}`;
+        console.log("Base URL: ", baseUrl);
+
+
+        const response = await fetch(`${baseUrl}/api/properties?propertyID=${propertyID}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // Add cache control for better performance
+            cache: 'no-store' // or 'force-cache' depending on your needs
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                return null; // Property not found
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const property: PropertyData = await response.json();
+        
+        // Add calculated daysOnMarket
+        const propertyWithDays = {
+            ...property,
+            daysOnMarket: calculateDays(property.listedOn)
+        };
+
+        return propertyWithDays;
+    } catch (error) {
+        console.error("Error fetching property: ", error);
+        return null;
+    }
+}
+
+export default async function PropertyDetailPage({
     params,
 }: {
     params: { id: string };
 }) {
-    // In a real application, you would fetch property data based on params.id
-    // For this example, we'll use a dummy property.
-    const property = dummyProperty;
-
+    console.log("The parameter: ", params);
+    
+    // Fetch the property data
+    const property = await fetchProperty(params.id);
+    
+    // If property not found, trigger Next.js 404 page
     if (!property) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-xl text-slate-700">Property not found.</p>
-            </div>
-        );
+        notFound();
     }
+
+    // For development/testing, you can fallback to dummy data
+    // const propertyToRender = property || dummyProperty;
 
     return (
         <div className="min-h-screen">

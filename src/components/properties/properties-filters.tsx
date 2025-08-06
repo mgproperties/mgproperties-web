@@ -1,19 +1,93 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useContext } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ChevronDown, X, SlidersHorizontal } from "lucide-react"
+import { useFilterContext, FilterState } from "@/contexts/FilterContext"
+
 
 export function PropertiesFilters() {
-  const [showFilters, setShowFilters] = useState(false)
-  const [activeFilters, setActiveFilters] = useState<string[]>([])
-  const [sortBy, setSortBy] = useState("newest")
+
+  const { filters, setFilters, properties } = useFilterContext();
+  const [showFilters, setShowFilters] = useState(false);
+  const [tempFilters, setTempFilters] = useState<FilterState>(filters);
+
+  //active filter labels
+  const getActiveFilters = () => {
+    const active: string[] = [];
+
+    if (tempFilters.features.length > 0) {
+      active.push(...tempFilters.features);
+    }
+    if (tempFilters.propertyAge) {
+      active.push(`Age: ${tempFilters.propertyAge}`);
+    }
+    if (tempFilters.minSqFt) {
+      active.push(`Min: ${tempFilters.minSqFt} sqm`);
+    }
+    if (tempFilters.maxSqFt) {
+      active.push(`Max: ${tempFilters.maxSqFt} sqm`);
+    }
+    if (tempFilters.listingStatus.length > 0) {
+      active.push(...tempFilters.listingStatus);
+    }
+
+    return active;
+  }
+
+  const activeFilters = getActiveFilters();
 
   const removeFilter = (filter: string) => {
-    setActiveFilters(activeFilters.filter((f) => f !== filter))
+    const newFilters = { ...tempFilters };
+
+    newFilters.features = newFilters.features.filter(f => f !== filter);
+    newFilters.listingStatus = newFilters.listingStatus.filter(f => f !== filter);
+
+    if (filter.startsWith('Age:')) newFilters.propertyAge = '';
+    if (filter.startsWith('Min:')) newFilters.minSqFt = '';
+    if (filter.startsWith('Max:')) newFilters.maxSqFt = '';
+
+    setTempFilters(newFilters);
+    setFilters(newFilters);
+  };
+
+  const clearAllFilters = () => {
+    const emptyFilters: FilterState = {
+      features: [],
+      propertyAge: '',
+      minSqFt: '',
+      maxSqFt: '',
+      listingStatus: [],
+      sortBy: tempFilters.sortBy
+    };
+    setTempFilters(emptyFilters);
+    setFilters(emptyFilters);
   }
+
+  const applyFilters = () => {
+        setFilters(tempFilters);
+        setShowFilters(false);
+    };
+
+    const handleFeatureChange = (feature: string, checked: boolean) => {
+        setTempFilters(prev => ({
+            ...prev,
+            features: checked 
+                ? [...prev.features, feature]
+                : prev.features.filter(f => f !== feature)
+        }));
+    };
+
+    const handleStatusChange = (status: string, checked: boolean) => {
+        setTempFilters(prev => ({
+            ...prev,
+            listingStatus: checked 
+                ? [...prev.listingStatus, status]
+                : prev.listingStatus.filter(s => s !== status)
+        }));
+    };
 
   return (
     <section className="py-8 bg-gradient-to-b from-slate-50 to-green-50/30 border-b border-gray-200/60">
@@ -23,7 +97,7 @@ export function PropertiesFilters() {
           {/* Results Count & Active Filters */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="text-slate-700 font-semibold">
-              <span className="text-2xl text-primary">247</span> properties found
+              <span className="text-2xl text-primary">{properties.length}</span> {properties.length === 1 ? 'property' : 'properties'} found
             </div>
 
             {/* Active Filters */}
@@ -46,7 +120,7 @@ export function PropertiesFilters() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setActiveFilters([])}
+                  onClick={clearAllFilters}
                   className="text-slate-500 hover:text-slate-700 px-2 py-1 h-auto font-medium"
                 >
                   Clear all
@@ -60,8 +134,12 @@ export function PropertiesFilters() {
             {/* Sort Dropdown */}
             <div className="relative">
               <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                value={tempFilters.sortBy}
+                onChange={(e) => {
+                  const newFilters = { ...tempFilters, sortBy: e.target.value};
+                  setTempFilters(newFilters);
+                  setFilters(newFilters);
+                }}
                 className="appearance-none bg-white border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all hover:shadow-md cursor-pointer"
               >
                 <option value="newest">Newest First</option>
@@ -99,6 +177,8 @@ export function PropertiesFilters() {
                       <label key={feature} className="flex items-center cursor-pointer group">
                         <input
                           type="checkbox"
+                          checked={tempFilters.features.includes(feature)}
+                          onChange={(e) => handleFeatureChange(feature, e.target.checked)}
                           className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary/50 focus:ring-2"
                         />
                         <span className="ml-3 text-slate-600 group-hover:text-slate-800 transition-colors">
@@ -118,6 +198,8 @@ export function PropertiesFilters() {
                         <input
                           type="radio"
                           name="property-age"
+                          checked={tempFilters.propertyAge === age}
+                          onChange={() => setTempFilters(prev => ({ ...prev, propertyAge:age }))}
                           className="w-5 h-5 text-primary border-gray-300 focus:ring-primary/50 focus:ring-2"
                         />
                         <span className="ml-3 text-slate-600 group-hover:text-slate-800 transition-colors">{age}</span>
@@ -126,23 +208,27 @@ export function PropertiesFilters() {
                   </div>
                 </div>
 
-                {/* Square Footage */}
+                {/* Square Meters */}
                 <div>
-                  <h4 className="text-lg font-bold text-slate-800 mb-4">Square Footage</h4>
+                  <h4 className="text-lg font-bold text-slate-800 mb-4">Square Meters</h4>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-2">Min Sq Ft</label>
+                      <label className="block text-sm font-medium text-slate-600 mb-2">Min Sqm</label>
                       <input
                         type="number"
-                        placeholder="1,000"
+                        placeholder="100"
+                        value={tempFilters.minSqFt}
+                        onChange={(e) => setTempFilters(prev => ({ ...prev, minSqFt: e.target.value }))}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-slate-600 mb-2">Max Sq Ft</label>
+                      <label className="block text-sm font-medium text-slate-600 mb-2">Max Sqm</label>
                       <input
                         type="number"
-                        placeholder="5,000"
+                        placeholder="500"
+                        value={tempFilters.maxSqFt}
+                        onChange={(e) => setTempFilters(prev => ({ ...prev, maxSqFt: e.target.value }))}
                         className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                       />
                     </div>
@@ -153,10 +239,12 @@ export function PropertiesFilters() {
                 <div>
                   <h4 className="text-lg font-bold text-slate-800 mb-4">Listing Status</h4>
                   <div className="space-y-3">
-                    {["For Sale", "New Listing", "Price Reduced", "Open House", "Coming Soon"].map((status) => (
+                    {["For Sale", "New Listing", "Price Reduced", "Open House", "Coming Soon", "For Rent"].map((status) => (
                       <label key={status} className="flex items-center cursor-pointer group">
                         <input
                           type="checkbox"
+                          checked={tempFilters.listingStatus.includes(status)}
+                          onChange={(e) => handleStatusChange(status, e.target.checked)}
                           className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary/50 focus:ring-2"
                         />
                         <span className="ml-3 text-slate-600 group-hover:text-slate-800 transition-colors">
@@ -170,7 +258,11 @@ export function PropertiesFilters() {
 
               {/* Filter Actions */}
               <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
-                <Button variant="ghost" className="text-slate-500 hover:text-slate-700 font-medium">
+                <Button 
+                  variant="ghost"
+                  onClick={clearAllFilters} 
+                  className="text-slate-500 hover:text-slate-700 font-medium"
+                >
                   Reset Filters
                 </Button>
                 <div className="flex gap-3">
@@ -182,7 +274,7 @@ export function PropertiesFilters() {
                     Cancel
                   </Button>
                   <Button
-                    onClick={() => setShowFilters(false)}
+                    onClick={applyFilters}
                     className="bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-2xl px-6 py-3 font-semibold shadow-lg hover:shadow-xl transition-all"
                   >
                     Apply Filters
