@@ -77,11 +77,11 @@ export function Services() {
                 </div>
 
                 {/* Services Grid - Layered Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
                     {services.map((service, index) => (
                         <Card
                             key={index}
-                            className="group hover:shadow-2xl transition-all duration-500 border-0 bg-white rounded-3xl overflow-hidden hover:scale-[1.02]"
+                            className="group hover:shadow-2xl transition-all duration-500 border-0 bg-white rounded-3xl overflow-hidden hover:scale-[1.02] w-full max-w-sm flex-shrink-0 md:w-80"
                         >
                             <CardContent className="p-8 relative">
                                 {/* Gradient background accent */}
