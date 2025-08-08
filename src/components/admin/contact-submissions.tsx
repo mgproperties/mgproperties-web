@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Table,
@@ -21,54 +21,43 @@ import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 
 interface ContactSubmission {
-    id: string;
-    name: string;
+    inquiryID: string;
+    fullName: string;
     email: string;
     phone?: string;
     subject: string;
     message: string;
     propertyType?: string;
     budget?: string;
-    timestamp: Date;
+    createdAt: Date;
 }
 
-const initialSubmissions: ContactSubmission[] = [
-    {
-        id: "1",
-        name: "John Doe",
-        email: "john.doe@example.com",
-        phone: "555-111-2222",
-        subject: "Buy Property",
-        message: "I'm looking for a 3-bedroom house in the suburbs.",
-        propertyType: "House",
-        budget: "$500K - $750K",
-        timestamp: new Date("2024-07-10T10:00:00Z"),
-    },
-    {
-        id: "2",
-        name: "Jane Smith",
-        email: "jane.smith@example.com",
-        subject: "General Inquiry",
-        message: "Could you provide more information about your services?",
-        timestamp: new Date("2024-07-09T14:30:00Z"),
-    },
-    {
-        id: "3",
-        name: "Peter Jones",
-        email: "peter.jones@example.com",
-        phone: "555-333-4444",
-        subject: "Sell Property",
-        message: "I'm interested in selling my condo downtown.",
-        propertyType: "Condo",
-        timestamp: new Date("2024-07-08T09:15:00Z"),
-    },
-];
-
 export function ContactSubmissions() {
-    const [submissions] = useState<ContactSubmission[]>(initialSubmissions);
+    const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
     const [selectedSubmission, setSelectedSubmission] =
         useState<ContactSubmission | null>(null);
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+
+    const fetchSubmissions = async () => {
+        try {
+            const response = await fetch('api/admin/submissions', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result: ContactSubmission[] = await response.json();
+
+            setSubmissions(result);
+        } catch (error) {
+            console.error("Error fetching submissions: ", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSubmissions();
+    }, []);
 
     const handleViewSubmission = (submission: ContactSubmission) => {
         setSelectedSubmission(submission);
@@ -101,15 +90,15 @@ export function ContactSubmissions() {
                         </TableHeader>
                         <TableBody>
                             {submissions.map((submission) => (
-                                <TableRow key={submission.id}>
+                                <TableRow key={submission.inquiryID}>
                                     <TableCell className="text-sm text-slate-600">
                                         {format(
-                                            submission.timestamp,
+                                            submission.createdAt,
                                             "MMM dd, yyyy HH:mm"
                                         )}
                                     </TableCell>
                                     <TableCell className="font-medium">
-                                        {submission.name}
+                                        {submission.fullName}
                                     </TableCell>
                                     <TableCell>{submission.email}</TableCell>
                                     <TableCell>{submission.subject}</TableCell>
@@ -161,7 +150,7 @@ export function ContactSubmissions() {
                                                 <span className="font-medium">
                                                     Name:
                                                 </span>{" "}
-                                                {selectedSubmission.name}
+                                                {selectedSubmission.fullName}
                                             </p>
                                             <p>
                                                 <span className="font-medium">
@@ -182,7 +171,7 @@ export function ContactSubmissions() {
                                                     Date:
                                                 </span>{" "}
                                                 {format(
-                                                    selectedSubmission.timestamp,
+                                                    selectedSubmission.createdAt,
                                                     "MMMM dd, yyyy 'at' HH:mm"
                                                 )}
                                             </p>
