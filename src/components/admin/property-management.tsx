@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,75 +29,74 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Edit, Trash2, Save, XCircle } from "lucide-react";
+import { PropertyData } from "@/contexts/FilterContext";
 
-interface Property {
-    id: string;
-    title: string;
-    price: string;
-    location: string;
-    beds: number;
-    baths: number;
-    sqm: string;
-    status: string;
-    propertyType: string;
-    description: string;
-    image: string;
-    images?: string[]; // Add this optional field
+function calculateDays(timestamp: string): number {
+    const inputDate = new Date(timestamp);
+    const today = new Date();
+    const utcInput = Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate());
+    const utcToday = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+    const millisecondsPerDay = 1000 * 60 * 60 * 24;
+    return Math.floor((utcToday - utcInput) / millisecondsPerDay) + 1;
 }
-
-const initialProperties: Property[] = [
-    {
-        id: "1",
-        title: "Modern Family Home",
-        price: "$750,000",
-        location: "Beverly Hills, CA",
-        beds: 4,
-        baths: 3,
-        sqm: "232",
-        status: "For Sale",
-        propertyType: "Single Family House",
-        description:
-            "Stunning modern home with open floor plan and premium finishes throughout.",
-        image: "/placeholder.svg?height=100&width=150",
-    },
-    {
-        id: "2",
-        title: "Downtown Luxury Condo",
-        price: "$1,200,000",
-        location: "Manhattan, NY",
-        beds: 2,
-        baths: 2,
-        sqm: "180",
-        status: "New Listing",
-        propertyType: "Condo",
-        description:
-            "Luxury high-rise condo with breathtaking city views and premium amenities.",
-        image: "/placeholder.svg?height=100&width=150",
-    },
-];
 
 interface PropertyManagementProps {
     userRole: "admin" | "agent";
 }
 
 export function PropertyManagement({ userRole }: PropertyManagementProps) {
-    const [properties, setProperties] = useState<Property[]>(initialProperties);
+
+    const [properties, setProperties] = useState<PropertyData[]>([]);
+    
+        const fetchProperties = async () => {
+            try {
+                const response = await fetch('api/properties', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+    
+                const result: PropertyData[] = await response.json();
+    
+                if (response.ok) {
+                    const updatedProperties = result.map((property) => ({
+                        ...property,
+                        daysOnMarket: calculateDays(property.listedOn)
+                    }));
+                    setProperties(updatedProperties);
+                }
+            } catch (error) {
+                console.error("Error fetching properties: ", error);
+            }
+        };
+    
+        useEffect(() => {
+            fetchProperties();
+        }, []);
+    //const [properties, setProperties] = useState<PropertyData[]>(initialProperties);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingProperty, setEditingProperty] = useState<Property | null>(
+    const [editingProperty, setEditingProperty] = useState<PropertyData | null>(
         null
     );
-    const [newProperty, setNewProperty] = useState<Omit<Property, "id">>({
+    const [newProperty, setNewProperty] = useState<Omit<PropertyData, "propertyID">>({
         title: "",
         price: "",
         location: "",
         beds: 0,
         baths: 0,
-        sqm: "",
+        sqm: 0,
         status: "For Sale",
-        propertyType: "Single Family House",
+        propertyType: "Residential",
         description: "",
-        image: "/placeholder.svg?height=100&width=150",
         images: [], // Add this for multiple images
+        imageCount: 0,
+        priceReduced: false,
+        originalPrice: "",
+        features: [],
+        featured: false,
+        listedOn: "",
+        agent: ""
     });
 
     const handleCreateProperty = () => {
@@ -108,41 +107,52 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
             location: "",
             beds: 0,
             baths: 0,
-            sqm: "",
+            sqm: 0,
             status: "For Sale",
-            propertyType: "Single Family House",
+            propertyType: "Residential",
             description: "",
-            image: "/placeholder.svg?height=100&width=150",
-            images: [],
+            images: [], // Add this for multiple images
+            imageCount: 0,
+            priceReduced: false,
+            originalPrice: "",
+            features: [],
+            featured: false,
+            listedOn: "",
+            agent: ""
         });
         setIsDialogOpen(true);
     };
 
-    const handleEditProperty = (property: Property) => {
+    const handleEditProperty = (property: PropertyData) => {
         setEditingProperty(property);
-        setNewProperty({ ...property, images: property.images || [] });
+        setNewProperty({
+            ...property, 
+            images: property.images || [],
+            features:property.features || [],
+            originalPrice: property.originalPrice || "",
+        });
         setIsDialogOpen(true);
     };
 
-    const handleDeleteProperty = (id: string) => {
-        setProperties(properties.filter((property) => property.id !== id));
+    const handleDeleteProperty = (id: number) => {
+        //setProperties(properties.filter((property) => property.propertyID !== id));
     };
 
     const handleSaveProperty = () => {
-        if (editingProperty) {
+        /* if (editingProperty) {
             setProperties(
                 properties.map((property) =>
-                    property.id === editingProperty.id
-                        ? { ...newProperty, id: editingProperty.id }
+                    property.propertyID === editingProperty.propertyID
+                        ? { ...newProperty, propertyID: editingProperty.propertyID }
                         : property
                 )
             );
         } else {
             setProperties([
                 ...properties,
-                { ...newProperty, id: String(properties.length + 1) },
+                { ...newProperty, propertyID: properties.length + 1 },
             ]);
-        }
+        } */
         setIsDialogOpen(false);
     };
 
@@ -180,11 +190,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                     </TableHeader>
                     <TableBody>
                         {properties.map((property) => (
-                            <TableRow key={property.id}>
+                            <TableRow key={property.propertyID}>
                                 <TableCell>
                                     <img
                                         src={
-                                            property.image || "/placeholder.svg"
+                                            property.images[0] || "/placeholder.svg"
                                         }
                                         alt={property.title}
                                         className="w-16 h-12 object-cover rounded-md"
@@ -217,7 +227,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                 size="icon"
                                                 onClick={() =>
                                                     handleDeleteProperty(
-                                                        property.id
+                                                        property.propertyID
                                                     )
                                                 }
                                             >
@@ -324,16 +334,53 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                     <Label htmlFor="sqm">Area (sqm)</Label>
                                     <Input
                                         id="sqm"
+                                        type="number"
                                         value={newProperty.sqm}
                                         onChange={(e) =>
                                             setNewProperty({
                                                 ...newProperty,
-                                                sqm: e.target.value,
+                                                sqm: Number.parseInt(e.target.value) || 0,
                                             })
                                         }
                                         className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="priceReduced">Price Reduced</Label>
+                                    <div className="flex items-center space-x-2">
+                                        <input
+                                            id="priceReduced"
+                                            type="checkbox"
+                                            checked={newProperty.priceReduced}
+                                            onChange={(e) => 
+                                                setNewProperty({
+                                                    ...newProperty,
+                                                    priceReduced: e.target.checked,
+                                                    originalPrice: e.target.checked ? newProperty.originalPrice : "",
+                                                })
+                                            }
+                                            className="rounded border-gray-300"
+                                        />
+                                        <span className="text-sm text-gray-600">Mark as price reduced</span>
+                                    </div>
+                                </div>
+                                {newProperty.priceReduced && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="originalPrice">Original Price</Label>
+                                        <Input
+                                            id="originalPrice"
+                                            value={newProperty.originalPrice || ""}
+                                            onChange={(e) =>
+                                                setNewProperty({
+                                                    ...newProperty,
+                                                    originalPrice: e.target.value,
+                                                })
+                                            }
+                                            className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                            placeholder="Enter original price"
+                                        />
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <Label htmlFor="status">Status</Label>
                                     <Select
@@ -352,6 +399,9 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                             <SelectItem value="For Sale">
                                                 For Sale
                                             </SelectItem>
+                                            <SelectItem value="For Rent">
+                                                For Rent
+                                            </SelectItem>
                                             <SelectItem value="New Listing">
                                                 New Listing
                                             </SelectItem>
@@ -360,6 +410,33 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                             </SelectItem>
                                             <SelectItem value="Sold">
                                                 Sold
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="agent">Agent</Label>
+                                    <Select
+                                        value={newProperty.agent}
+                                        onValueChange={(value) =>
+                                            setNewProperty({
+                                                ...newProperty,
+                                                agent: value,
+                                            })
+                                        }
+                                    >
+                                        <SelectTrigger className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                                            <SelectValue placeholder="Select agent" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="John Stewards">
+                                                John Stewards
+                                            </SelectItem>
+                                            <SelectItem value="Samantha Simone">
+                                                Samantha Simone
+                                            </SelectItem>
+                                            <SelectItem value="Olebile Moremong">
+                                                Olebile Moremong
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -381,37 +458,85 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                             <SelectValue placeholder="Select type" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="Single Family House">
-                                                Single Family House
-                                            </SelectItem>
-                                            <SelectItem value="Condo">
-                                                Condo
-                                            </SelectItem>
-                                            <SelectItem value="Townhouse">
-                                                Townhouse
-                                            </SelectItem>
-                                            <SelectItem value="Villa">
-                                                Villa
+                                            <SelectItem value="Residential">
+                                                Residential
                                             </SelectItem>
                                             <SelectItem value="Commercial">
                                                 Commercial
+                                            </SelectItem>
+                                            <SelectItem value="Agricultural">
+                                                Agricultural
+                                            </SelectItem>
+                                            <SelectItem value="Multi-residential">
+                                                Multi-residential
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2 col-span-2">
-                                    <Label htmlFor="image">Image URL</Label>
-                                    <Input
-                                        id="image"
-                                        value={newProperty.image}
-                                        onChange={(e) =>
-                                            setNewProperty({
-                                                ...newProperty,
-                                                image: e.target.value,
-                                            })
-                                        }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
-                                    />
+                                    <Label htmlFor="features">Features</Label>
+                                    <div className="space-y-2">
+                                        <div className="flex gap-2">
+                                            <Input
+                                                id="newFeature"
+                                                placeholder="Add a feature..."
+                                                onKeyPress={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        const value = e.currentTarget.value.trim();
+                                                        if (value && !newProperty.features.includes(value)) {
+                                                            setNewProperty({
+                                                                ...newProperty,
+                                                                features: [...newProperty.features, value],
+                                                            });
+                                                            e.currentTarget.value = '';
+                                                        }
+                                                    }
+                                                }}
+                                                className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                            />
+                                            <Button
+                                                type="button"
+                                                onClick={() => {
+                                                    const input = document.getElementById('newFeature') as HTMLInputElement;
+                                                    const value = input.value.trim();
+                                                    if (value && !newProperty.features.includes(value)) {
+                                                        setNewProperty({
+                                                            ...newProperty,
+                                                            features: [...newProperty.features, value],
+                                                        });
+                                                        input.value = '';
+                                                    }
+                                                }}
+                                                className="rounded-lg"
+                                            >
+                                                Add
+                                            </Button>
+                                        </div>
+                                        {newProperty.features.length > 0 && (
+                                            <div className="flex flex-wrap gap-2">
+                                                {newProperty.features.map((feature, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-sm"
+                                                    >
+                                                        {feature}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setNewProperty({
+                                                                    ...newProperty,
+                                                                    features: newProperty.features.filter((_, i) => i !== index),
+                                                                });
+                                                            }}
+                                                            className="text-blue-600 hover:text-blue-800"
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 {/* Add new image upload section before description */}
                                 <div className="space-y-2 col-span-2">
