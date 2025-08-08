@@ -12,7 +12,7 @@ export function AboutStory() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
                     {/* Left Column - Story */}
                     <div>
                         <Badge className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-full text-primary font-semibold mb-8">
@@ -20,34 +20,47 @@ export function AboutStory() {
                         </Badge>
                         <h2 className="text-4xl md:text-5xl font-bold mb-8 text-slate-800 leading-tight">
                             Building Dreams,
-                            <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                            <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent pb-3">
                                 Creating Homes
                             </span>
                         </h2>
 
                         <div className="space-y-6 text-lg text-slate-600 leading-relaxed">
                             <p>
-                                Founded in 2009 by real estate veterans Sarah
-                                Mitchell and David Chen, PrimeRealty was born
-                                from a simple belief: every person deserves to
-                                find their perfect home with trusted guidance
-                                and exceptional service.
+                                In 2009, I embarked on a journey that has since
+                                helped many people in Botswana. From first-time
+                                homeowners nesting their young families, or the
+                                budding corporate professionals looking to set
+                                up in the cities, to the seasoned property
+                                investors who, from that moment, have trusted
+                                our word, to the institutional clients,
+                                parastatals, and multinationals, we have built
+                                our reputation on the values that have
+                                differentiated us from the rest.
                             </p>
 
                             <p>
-                                What started as a small boutique agency has
-                                grown into one of the region's most respected
-                                real estate firms, but our core values remain
-                                unchanged. We believe in building lasting
-                                relationships, not just closing deals.
+                                As we continue to set the standards for
+                                excellence in the real estate industry in
+                                Botswana, our aim is to expand into SADC while
+                                maintaining the same core values, which have
+                                remained unchanged since the first moment we
+                                opened our doors.
                             </p>
 
                             <p>
-                                Today, our team of 25+ experienced professionals
-                                continues to set the standard for excellence in
-                                real estate, combining cutting-edge technology
-                                with the personal touch that has made us a
-                                household name.
+                                Our belief in maintaining long-lasting
+                                relationships with our numerous clients has been
+                                paramount in our development.
+                            </p>
+
+                            <p>Thank you to all those who have trusted us.</p>
+
+                            <p>Yours truly,</p>
+
+                            <p>
+                                Mpho Moremong-Gobe <br />
+                                (Founder)
                             </p>
                         </div>
                         {/* Vision */}

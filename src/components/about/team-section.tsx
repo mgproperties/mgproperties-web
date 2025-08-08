@@ -1,16 +1,16 @@
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, Linkedin } from "lucide-react";
+import { Linkedin } from "lucide-react";
 import React from "react";
 import Image from "next/image";
 
 const teamMembers = [
     {
-        name: "Sarah Mitchell",
+        name: "Mpho Moremong-Gobe",
         role: "Founder & CEO",
         image: "/placeholder.svg?height=400&width=400",
-        bio: "With 20+ years in real estate, Sarah leads our team with vision and expertise. Her passion for helping families find their perfect homes drives everything we do at PrimeRealty.",
-        email: "sarah@primerealty.com",
-        phone: "(555) 123-4567",
+        bio: "With 20+ years in real estate, Mpho leads our team with vision and expertise. Her passion for helping families find their perfect homes drives everything we do at MG Properties.",
+        email: "mgobe@mgproperties.co.bw",
+        // phone: "(555) 123-4567",
         specialties: [
             "Luxury Homes",
             "Investment Properties",
@@ -18,7 +18,7 @@ const teamMembers = [
             "Team Leadership",
         ],
         achievements: [
-            "Founded PrimeRealty in 2009",
+            "Founded MG Properties in 2009",
             "500+ successful transactions",
             "Top 1% of agents nationally",
             "Real Estate Excellence Award 2023",
@@ -49,9 +49,9 @@ export function TeamSection() {
                     </h2>
                     <div className="w-24 h-1 bg-gradient-to-r from-accent to-primary mx-auto mb-8" />
                     <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-                        Meet the visionary who founded PrimeRealty and continues
-                        to lead our mission of helping families find their
-                        perfect homes
+                        Meet the visionary who founded MG Properties and
+                        continues to lead our mission of helping families find
+                        their perfect homes
                     </p>
                 </div>
 
@@ -82,22 +82,19 @@ export function TeamSection() {
                                             <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex space-x-3">
-                                                        <div className="p-2 bg-primary/10 rounded-xl">
-                                                            <Mail className="h-5 w-5 text-primary" />
-                                                        </div>
-                                                        <div className="p-2 bg-primary/10 rounded-xl">
-                                                            <Phone className="h-5 w-5 text-primary" />
-                                                        </div>
-                                                        <div className="p-2 bg-primary/10 rounded-xl">
-                                                            <Linkedin className="h-5 w-5 text-primary" />
-                                                        </div>
+                                                        <a
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            href="https://www.linkedin.com/in/mpho-moremong-gobe-119a1630/"
+                                                        >
+                                                            <div className="p-2 bg-primary/10 rounded-xl">
+                                                                <Linkedin className="h-5 w-5 text-primary" />
+                                                            </div>
+                                                        </a>
                                                     </div>
                                                     <div className="text-right">
-                                                        <div className="text-sm text-slate-600">
-                                                            Direct Contact
-                                                        </div>
-                                                        <div className="font-semibold text-primary">
-                                                            {member.phone}
+                                                        <div className="text-sm text-slate-700">
+                                                            {member.email}
                                                         </div>
                                                     </div>
                                                 </div>

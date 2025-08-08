@@ -16,7 +16,7 @@ export function AboutValues() {
                 {/* Editorial Header */}
                 <div className="text-center mb-20">
                     <Badge className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-full text-primary font-semibold mb-8">
-                        Why Choose PrimeRealty
+                        Why Choose MG Properties
                     </Badge>
                     <h2 className="text-4xl md:text-6xl font-bold mb-6 text-slate-800 leading-tight">
                         Your Space,
@@ -45,9 +45,9 @@ export function AboutValues() {
                         },
                         {
                             icon: Award,
-                            title: "Award-Winning Service",
+                            title: "Award-Winning Founder",
                             description:
-                                "Recognized as 'Real Estate Agency of the Year' three consecutive years for outstanding client service.",
+                                "Our founder has been recognized for her exceptional leadership and commitment to client success.",
                             stats: "Multiple Industry Awards",
                             gradient: "from-accent/10 to-primary/10",
                         },

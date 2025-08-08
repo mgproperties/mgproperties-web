@@ -24,7 +24,7 @@ export function AboutHero() {
                 <div className="text-center">
                     {/* Premium badge */}
                     <Badge className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-accent to-accent-600 rounded-full text-white font-semibold mb-8">
-                        About PrimeRealty
+                        About MG Properties
                     </Badge>
 
                     {/* Editorial headline */}
