@@ -47,6 +47,7 @@ interface PropertyManagementProps {
 export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const [properties, setProperties] = useState<PropertyData[]>([]);
+    const [isSaving, setIsSaving] = useState(false);
     
         const fetchProperties = async () => {
             try {
@@ -134,25 +135,54 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
         setIsDialogOpen(true);
     };
 
-    const handleDeleteProperty = (id: number) => {
-        //setProperties(properties.filter((property) => property.propertyID !== id));
+    const handleDeleteProperty = async (id: number) => {
+        try {
+            const response = await fetch('api/admin/properties', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    propertyID: id
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                await fetchProperties();
+            }
+        } catch (error) {
+            console.error("Could not delete property from the database: ", error);
+        }
     };
 
-    const handleSaveProperty = () => {
-        /* if (editingProperty) {
-            setProperties(
-                properties.map((property) =>
-                    property.propertyID === editingProperty.propertyID
-                        ? { ...newProperty, propertyID: editingProperty.propertyID }
-                        : property
-                )
-            );
-        } else {
-            setProperties([
-                ...properties,
-                { ...newProperty, propertyID: properties.length + 1 },
-            ]);
-        } */
+    const handleSaveProperty = async () => {
+        setIsSaving(true);
+        try{
+            const response = await fetch('api/admin/properties', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...newProperty,
+                    propertyID: editingProperty?.propertyID
+                })
+            });
+
+            const result = await response.json();
+            console.log("Data has been updated: ", result);
+
+            if (response.ok){
+                await fetchProperties();
+            }
+        } catch (error){
+            console.error("Could not save property to the database: ", error);
+            throw error;
+        } finally {
+            setIsSaving(false);
+        }
         setIsDialogOpen(false);
     };
 
@@ -225,11 +255,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() =>
-                                                    handleDeleteProperty(
-                                                        property.propertyID
-                                                    )
-                                                }
+                                                onClick={() => {
+                                                    if (window.confirm(`Are you you want to delete "${property.title}"?`)){
+                                                        handleDeleteProperty(property.propertyID);
+                                                    }
+                                                }}
                                             >
                                                 <Trash2 className="h-4 w-4 text-red-500" />
                                             </Button>
@@ -675,10 +705,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                             </Button>
                             <Button
                                 onClick={handleSaveProperty}
+                                disabled={isSaving}
                                 className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md"
                             >
                                 <Save className="mr-2 h-4 w-4" />
-                                Save Changes
+                                {isSaving ? "Saving..." : "Save Changes"}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

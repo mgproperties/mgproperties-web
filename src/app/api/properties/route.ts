@@ -23,9 +23,6 @@ export async function GET(request: NextRequest) {
           image_url,
           image_order,
           is_primary
-        ),
-        propertyTypeJoin: propertyTypeID (
-          propertyTypeName
         )
       `); // This joins with property_image table
 
@@ -82,12 +79,10 @@ export async function GET(request: NextRequest) {
 
       return {
         ...property, // Keep all original property data
-        propertyType: property.propertyTypeJoin?.propertyTypeName,
         images: imageUrls, // Add array of image URLs
         imageCount: imageUrls.length, // Add count for display
         // Remove the joined data since we've processed it
         property_image: undefined,
-        propertyTypeJoin: undefined
       };
     }) || [];
 
