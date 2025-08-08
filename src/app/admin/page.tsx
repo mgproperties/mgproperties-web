@@ -75,7 +75,7 @@ export default function AdminPage() {
                         className="w-full"
                     >
                         <TabsList
-                            className="grid w-full bg-white/80 backdrop-blur-md rounded-2xl p-2 shadow-lg border border-gray-200"
+                            className="grid w-full bg-white/80 backdrop-blur-md rounded-2xl p-1 shadow-lg border border-gray-200 h-auto min-h-[60px] items-center"
                             style={{
                                 gridTemplateColumns:
                                     userRole === "admin"
@@ -86,25 +86,25 @@ export default function AdminPage() {
                             {userRole === "admin" && (
                                 <TabsTrigger
                                     value="users"
-                                    className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:rounded-xl data-[state=active]:font-semibold transition-all py-3 px-4 text-base whitespace-nowrap"
+                                    className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:rounded-xl data-[state=active]:font-semibold transition-all py-2 px-3 text-sm font-medium whitespace-nowrap flex items-center justify-center h-[48px]"
                                 >
-                                    <Users className="mr-2 h-5 w-5" />
-                                    User Management
+                                    <Users className="mr-2 h-4 w-4 flex-shrink-0" />
+                                    <span>User Management</span>
                                 </TabsTrigger>
                             )}
                             <TabsTrigger
                                 value="properties"
-                                className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:rounded-xl data-[state=active]:font-semibold transition-all py-3 px-4 text-base whitespace-nowrap"
+                                className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:rounded-xl data-[state=active]:font-semibold transition-all py-2 px-3 text-sm font-medium whitespace-nowrap flex items-center justify-center h-[48px]"
                             >
-                                <Home className="mr-2 h-5 w-5" />
-                                Property Listings
+                                <Home className="mr-2 h-4 w-4 flex-shrink-0" />
+                                <span>Property Listings</span>
                             </TabsTrigger>
                             <TabsTrigger
                                 value="contacts"
-                                className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:rounded-xl data-[state=active]:font-semibold transition-all py-3 px-4 text-base whitespace-nowrap"
+                                className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md data-[state=active]:rounded-xl data-[state=active]:font-semibold transition-all py-2 px-3 text-sm font-medium whitespace-nowrap flex items-center justify-center h-[48px]"
                             >
-                                <Mail className="mr-2 h-5 w-5" />
-                                Contact Submissions
+                                <Mail className="mr-2 h-4 w-4 flex-shrink-0" />
+                                <span>Contact Submissions</span>
                             </TabsTrigger>
                         </TabsList>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,7 +43,7 @@ interface Property {
     propertyType: string;
     description: string;
     image: string;
-    images?: string[]; // Add this optional field
+    images?: string[];
 }
 
 const initialProperties: Property[] = [
@@ -97,7 +98,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
         propertyType: "Single Family House",
         description: "",
         image: "/placeholder.svg?height=100&width=150",
-        images: [], // Add this for multiple images
+        images: [],
     });
 
     const handleCreateProperty = () => {
@@ -182,11 +183,13 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                         {properties.map((property) => (
                             <TableRow key={property.id}>
                                 <TableCell>
-                                    <img
+                                    <Image
                                         src={
                                             property.image || "/placeholder.svg"
                                         }
                                         alt={property.title}
+                                        width={64}
+                                        height={48}
                                         className="w-16 h-12 object-cover rounded-md"
                                     />
                                 </TableCell>
@@ -232,15 +235,15 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                 </Table>
 
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent className="sm:max-w-[600px] max-h-[90vh] bg-white rounded-2xl p-0 shadow-xl overflow-hidden">
-                        <DialogHeader className="p-6 pb-0">
+                    <DialogContent className="sm:max-w-[600px] max-h-[85vh] bg-white rounded-2xl shadow-xl flex flex-col">
+                        <DialogHeader className="flex-shrink-0 p-6 pb-0">
                             <DialogTitle className="text-2xl font-bold text-slate-800">
                                 {editingProperty
                                     ? "Edit Property"
                                     : "Create New Property"}
                             </DialogTitle>
                         </DialogHeader>
-                        <div className="overflow-y-auto max-h-[calc(90vh-120px)] p-6">
+                        <div className="flex-1 overflow-y-auto p-6 py-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="title">Title</Label>
@@ -413,7 +416,6 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                         className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
                                     />
                                 </div>
-                                {/* Add new image upload section before description */}
                                 <div className="space-y-2 col-span-2">
                                     <Label htmlFor="images">
                                         Property Images
@@ -482,7 +484,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                             key={idx}
                                                             className="relative"
                                                         >
-                                                            <img
+                                                            <Image
                                                                 src={
                                                                     img ||
                                                                     "/placeholder.svg"
@@ -490,6 +492,8 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                                 alt={`Upload ${
                                                                     idx + 1
                                                                 }`}
+                                                                width={80}
+                                                                height={80}
                                                                 className="w-full h-20 object-cover rounded-lg"
                                                             />
                                                             <button
@@ -539,7 +543,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                 </div>
                             </div>
                         </div>
-                        <DialogFooter className="p-6 pt-0">
+                        <DialogFooter className="flex-shrink-0 p-6 pt-4 border-t border-gray-100">
                             <Button
                                 variant="outline"
                                 onClick={() => setIsDialogOpen(false)}
