@@ -1,4 +1,7 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
 import {
     MapPin,
     Phone,
@@ -11,6 +14,23 @@ import {
 } from "lucide-react";
 
 export function ContactInfo() {
+    const [activeOffice, setActiveOffice] = useState("gaborone");
+
+    const officeData = {
+        gaborone: {
+            address: "Plot No: 20695 Unit 7\nOff Western Bypass\nGaborone",
+            phone: "(+267) 3105497\n(+267) 3105498 (Fax)",
+            mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d906.8134388228951!2d25.915042428470695!3d-24.614937498624936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ebb5b3c2ceea9bf%3A0xb3b127e4da28608b!2s9WP8%2B27%2C%20Gaborone!5e0!3m2!1sen!2sbw!4v1753470241166!5m2!1sen!2sbw",
+        },
+        francistown: {
+            address: "Plot No: 3996 Minestone\nFrancistown",
+            phone: "(+267) 2412011\n(+267) 2412072 (Fax)",
+            mapSrc: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7441.104480704835!2d27.508397651474738!3d-21.17021032108982!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1eb4686f2ab04855%3A0x10d6259cc4e97f6f!2sMinestone%2C%20Francistown!5e0!3m2!1sen!2sbw!4v1754662820864!5m2!1sen!2sbw",
+        },
+    };
+
+    const currentOffice = officeData[activeOffice];
+
     return (
         <section className="py-24 bg-gradient-to-b from-green-50/30 to-slate-50 relative overflow-hidden">
             {/* Warm background elements */}
@@ -26,24 +46,45 @@ export function ContactInfo() {
                         <h3 className="text-3xl md:text-4xl font-bold mb-8 text-slate-800 leading-tight">
                             Visit Our
                             <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                                Office
+                                Offices
                             </span>
                         </h3>
+
+                        {/* Office Selector */}
+                        <div className="flex space-x-3 mb-8">
+                            {[
+                                { key: "gaborone", label: "Gaborone Office" },
+                                {
+                                    key: "francistown",
+                                    label: "Francistown Office",
+                                },
+                            ].map((office) => (
+                                <button
+                                    key={office.key}
+                                    onClick={() => setActiveOffice(office.key)}
+                                    className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 ${
+                                        activeOffice === office.key
+                                            ? "bg-gradient-to-r from-primary to-accent text-white shadow-lg transform scale-105"
+                                            : "bg-white text-slate-600 hover:bg-slate-50 shadow-md hover:shadow-lg hover:scale-[1.02] border border-slate-100"
+                                    }`}
+                                >
+                                    {office.label}
+                                </button>
+                            ))}
+                        </div>
 
                         <div className="space-y-6">
                             {[
                                 {
                                     icon: MapPin,
                                     title: "Address",
-                                    content:
-                                        "Plot No: 20695 Unit 7\nOff Western Bypass\nGaborone",
+                                    content: currentOffice.address,
                                     gradient: "from-primary to-primary-600",
                                 },
                                 {
                                     icon: Phone,
                                     title: "Phone",
-                                    content:
-                                        "(+267) 3105497\n(+267) 3105498 (Fax)",
+                                    content: currentOffice.phone,
                                     gradient: "from-accent to-accent-600",
                                 },
                                 {
@@ -121,7 +162,7 @@ export function ContactInfo() {
                         </div>
                     </div>
 
-                    {/* Map Placeholder */}
+                    {/* Map */}
                     <div>
                         <h3 className="text-3xl md:text-4xl font-bold mb-8 text-slate-800 leading-tight">
                             Find Us on
@@ -133,7 +174,7 @@ export function ContactInfo() {
                         <Card className="bg-white rounded-3xl border-0 shadow-2xl overflow-hidden h-96">
                             <CardContent className="p-0 h-full">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d906.8134388228951!2d25.915042428470695!3d-24.614937498624936!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ebb5b3c2ceea9bf%3A0xb3b127e4da28608b!2s9WP8%2B27%2C%20Gaborone!5e0!3m2!1sen!2sbw!4v1753470241166!5m2!1sen!2sbw"
+                                    src={currentOffice.mapSrc}
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}

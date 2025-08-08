@@ -52,7 +52,9 @@ export function ContactHero() {
                             seamless and successful.
                         </p>
                     </div>
-
+                    <h1 className="text-4xl md:text-4xl font-bold  bg-gradient-to-r from-accent via-accent-600 to-accent-700 bg-clip-text text-transparent mt-9 -mb-7 tracking-tight">
+                        Main Office
+                    </h1>
                     {/* Quick contact info */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-16 max-w-5xl mx-auto">
                         {[
