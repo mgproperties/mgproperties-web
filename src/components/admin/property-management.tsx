@@ -30,6 +30,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Edit, Trash2, Save, XCircle } from "lucide-react";
 import { PropertyData } from "@/contexts/FilterContext";
+import { uploadPropertyImages, deletePropertyImages } from "@/utils/imageUpload";
 
 function calculateDays(timestamp: string): number {
     const inputDate = new Date(timestamp);
@@ -48,6 +49,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const [properties, setProperties] = useState<PropertyData[]>([]);
     const [isSaving, setIsSaving] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     
         const fetchProperties = async () => {
             try {
@@ -75,7 +77,6 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
         useEffect(() => {
             fetchProperties();
         }, []);
-    //const [properties, setProperties] = useState<PropertyData[]>(initialProperties);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingProperty, setEditingProperty] = useState<PropertyData | null>(
         null
@@ -102,6 +103,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const handleCreateProperty = () => {
         setEditingProperty(null);
+        setSelectedFiles([]);
         setNewProperty({
             title: "",
             price: "",
@@ -126,6 +128,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const handleEditProperty = (property: PropertyData) => {
         setEditingProperty(property);
+        setSelectedFiles([]);
         setNewProperty({
             ...property, 
             images: property.images || [],
@@ -137,6 +140,9 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const handleDeleteProperty = async (id: number) => {
         try {
+
+            await deletePropertyImages(id);
+
             const response = await fetch('api/admin/properties', {
                 method: 'DELETE',
                 headers: {
@@ -172,9 +178,17 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
             });
 
             const result = await response.json();
-            console.log("Data has been updated: ", result);
 
-            if (response.ok){
+            if (response.ok && result.result[0]?.propertyID){
+                const propertyID = result.result[0].propertyID;
+
+                if (selectedFiles.length > 0) {
+                    try {
+                        const imagePaths = await uploadPropertyImages(propertyID, selectedFiles);
+                    } catch (imageError) {
+                        console.error("Error uploading images: ", imageError);
+                    }
+                }
                 await fetchProperties();
             }
         } catch (error){
@@ -581,20 +595,14 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                             accept="image/*"
                                             className="hidden"
                                             onChange={(e) => {
-                                                const files = Array.from(
-                                                    e.target.files || []
-                                                );
-                                                const imageUrls = files.map(
-                                                    (file) =>
-                                                        URL.createObjectURL(
-                                                            file
-                                                        )
-                                                );
+                                                const files = Array.from(e.target.files || []);
+                                                setSelectedFiles([...selectedFiles, ...files]);
+
+                                                const imageUrls = files.map((file) => URL.createObjectURL(file));
                                                 setNewProperty({
                                                     ...newProperty,
                                                     images: [
-                                                        ...(newProperty.images ||
-                                                            []),
+                                                        ...(newProperty.images || []),
                                                         ...imageUrls,
                                                     ],
                                                 });
@@ -650,21 +658,14 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => {
-                                                                    const updatedImages =
-                                                                        newProperty.images?.filter(
-                                                                            (
-                                                                                _,
-                                                                                i
-                                                                            ) =>
-                                                                                i !==
-                                                                                idx
-                                                                        ) || [];
-                                                                    setNewProperty(
-                                                                        {
-                                                                            ...newProperty,
-                                                                            images: updatedImages,
-                                                                        }
-                                                                    );
+                                                                    const updatedImages = newProperty.images?.filter((_, i) => i !== idx) || [];
+                                                                    const updatedFiles = selectedFiles.filter((_, i) => i !== idx);
+
+                                                                    setNewProperty({
+                                                                        ...newProperty,
+                                                                        images: updatedImages,
+                                                                    });
+                                                                    setSelectedFiles(updatedFiles);
                                                                 }}
                                                                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
                                                             >

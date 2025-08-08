@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
                     ${body.originalPrice},
                     ${body.featured},
                     ${body.priceReduced},
-                    ${body.features}
+                    ${body.features},
                     ${body.propertyType}
                 )
                 RETURNING "propertyID";
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
             );
         }   
     } catch (error) {
-        console.error('Error processing contact form:', error);
+        console.error('Error processing properties (admin):', error);
         return NextResponse.json(
             { error: "An error occurred while processing your request." },
             { status: 500 }
@@ -139,7 +139,7 @@ export async function DELETE(request: NextRequest) {
             );
         }    
     } catch (error) {
-        console.error('Error processing contact form:', error);
+        console.error('Error processing properties (admin):', error);
         return NextResponse.json(
             { error: "An error occurred while processing your request." },
             { status: 500 }
