@@ -821,7 +821,10 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                         <DialogFooter className="p-6 pt-0">
                             <Button
                                 variant="outline"
-                                onClick={() => setIsDialogOpen(false)}
+                                onClick={() => {
+                                    setIsDialogOpen(false)
+                                    setErrors({})
+                                }}
                                 className="rounded-xl"
                             >
                                 <XCircle className="mr-2 h-4 w-4" />

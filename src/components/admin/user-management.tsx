@@ -364,7 +364,10 @@ export function UserManagement() {
                         <DialogFooter>
                             <Button
                                 variant="outline"
-                                onClick={() => setIsDialogOpen(false)}
+                                onClick={() => {
+                                    setIsDialogOpen(false)
+                                    setErrors({})
+                                }}
                                 className="rounded-xl"
                             >
                                 <XCircle className="mr-2 h-4 w-4" />
