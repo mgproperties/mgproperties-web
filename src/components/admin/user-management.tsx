@@ -46,6 +46,8 @@ interface ValidationErrors {
 }
 
 export function UserManagement() {
+
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -96,6 +98,7 @@ export function UserManagement() {
             if (response.ok) {
                 const data = await response.json();
                 setUsers(data.users);
+                setCurrentUser(data.currentUser);
             } else {
                 setError('Failed to fetch users')
             }
@@ -128,6 +131,7 @@ export function UserManagement() {
             const response = await fetch(`api/admin/users/${id}`, {
                 method: 'DELETE'
             });
+
             
             if (response.ok) {
                 fetchUsers(); // Refresh the list
@@ -266,15 +270,17 @@ export function UserManagement() {
                                         >
                                             <Edit className="h-4 w-4 text-primary" />
                                         </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() =>
-                                                handleDeleteUser(user.id)
-                                            }
-                                        >
+                                        {currentUser && user.id !== currentUser.id && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() =>
+                                                    handleDeleteUser(user.id)
+                                                }
+                                            >
                                             <Trash2 className="h-4 w-4 text-red-500" />
                                         </Button>
+                                    )}
                                     </TableCell>
                                 </TableRow>
                             ))

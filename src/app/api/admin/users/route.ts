@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json({ 
         users: usersWithProfiles,
+        currentUser: usersWithProfiles.find(u => u.id === user.id),
         total: usersWithProfiles.length 
       })
 
