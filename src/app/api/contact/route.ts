@@ -58,10 +58,6 @@ export async function POST(request: NextRequest) {
             RETURNING *;
         `;
 
-
-        //simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
         return NextResponse.json(
             {
                 message: "Thank you for contacting us! We will get back to you soon.",

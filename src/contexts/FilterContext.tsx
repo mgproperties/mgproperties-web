@@ -14,18 +14,13 @@ export interface PropertyData {
     status: string;
     featured: boolean;
     listedOn: string;
+    propertyType?: string;
     daysOnMarket?: number;
     priceReduced: boolean;
     features: string[];
     description: string;
     openHouse?: string;
-    agent: {
-        name: string;
-        role: string;
-        image: string;
-        phone: string;
-        email: string;
-    };
+    agent: string
 }
 
 export interface FilterState {

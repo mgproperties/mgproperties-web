@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
         images: imageUrls, // Add array of image URLs
         imageCount: imageUrls.length, // Add count for display
         // Remove the joined data since we've processed it
-        property_image: undefined
+        property_image: undefined,
       };
     }) || [];
 

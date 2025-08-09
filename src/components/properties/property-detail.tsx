@@ -28,6 +28,7 @@ interface Property {
     images: string[];
     imageCount: number;
     status: string;
+    propertyType: string;
     featured: boolean;
     listedOn: string;
     daysOnMarket?: number;
@@ -137,12 +138,12 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
                                             {property.sqm} sqm
                                         </span>
                                     </div>
-                                    {/* <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                    { <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                                         <Home className="h-6 w-6 text-primary" />
                                         <span className="font-semibold text-lg">
                                             {property.propertyType}
                                         </span>
-                                    </div> */}
+                                    </div> }
                                     <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
                                         <Calendar className="h-6 w-6 text-primary" />
                                         <span className="font-semibold text-lg">
