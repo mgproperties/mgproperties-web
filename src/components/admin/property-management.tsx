@@ -45,6 +45,22 @@ interface PropertyManagementProps {
     userRole: "admin" | "agent";
 }
 
+interface ValidationErrors {
+    title?: string;
+    price?: string;
+    originalPrice?: string;
+    location?: string;
+    beds?: string;
+    baths?: string;
+    sqm?: string;
+    images?: string;
+    status?: string;
+    featured?: string;
+    propertyType?: string;
+    features?: string;
+    agent?: string;
+}
+
 export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const [properties, setProperties] = useState<PropertyData[]>([]);

@@ -41,9 +41,8 @@ export async function withAdminAuth(
       )
     }
 
-    // Optional: Check for admin role
-    // You would need to create a profiles table and store roles
-    /*
+    //Check for admin role
+    
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
@@ -56,7 +55,7 @@ export async function withAdminAuth(
         { status: 403 }
       )
     }
-    */
+   
 
     return await handler(request, user)
   } catch (error) {

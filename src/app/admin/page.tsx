@@ -12,12 +12,12 @@ export default async function AdminPage() {
     redirect('/auth/login')
   }
 
-  // Optional: Get user profile with role
-  // const { data: profile } = await supabase
-  //   .from('profiles')
-  //   .select('role')
-  //   .eq('id', user.id)
-  //   .single()
+  //Get user profile with role
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, name')
+    .eq('id', user.id)
+    .single()
 
-  return <AdminDashboard user={user} />
+  return <AdminDashboard user={user} profile={profile} />
 }

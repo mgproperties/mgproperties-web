@@ -12,18 +12,22 @@ import { PropertyManagement } from "@/components/admin/property-management";
 import { ContactSubmissions } from "@/components/admin/contact-submissions";
 import { Button } from "@/components/ui/button";
 import { Users, Home, Mail, LogOut } from "lucide-react";
+import { useRoleAccess } from "@/hooks/use-role-access";
 
 interface AdminDashboardProps {
   user: User
+  profile: { role: 'admin' | 'agent', name: string } | null
 }
 
-export function AdminDashboard({ user }: AdminDashboardProps) {
-    const [userRole, setUserRole] = useState<"admin" | "agent">("admin");
+export function AdminDashboard({ user, profile }: AdminDashboardProps) {
+    const userRole = profile?.role || 'agent';
+
     const [activeTab, setActiveTab] = useState(
         userRole === "admin" ? "users" : "properties"
     );
     const router = useRouter()
     const supabase = createClient()
+    const { canAccessUserManagement, canAccessProperties, canAccessContacts } = useRoleAccess(userRole);
 
     useEffect(() => {
         if (userRole === "agent" && activeTab === "users") {
@@ -61,44 +65,11 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
 
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <h1 className="text-4xl md:text-5xl font-bold text-slate-800 leading-tight mb-4 text-center">
-                        Admin Dashboard
+                        {userRole==='admin' ? 'Admin' : 'Agent'} Dashboard
                     </h1>
                     <p className="text-center text-slate-600 mb-8">
-                        Welcome back, {user.email}
+                        Welcome back, {profile?.name}
                     </p>
-
-                    {/* Role Switcher */}
-                    <div className="flex justify-center gap-4 mb-12">
-                        <Button
-                            onClick={() => setUserRole("admin")}
-                            variant={
-                                userRole === "admin" ? "default" : "outline"
-                            }
-                            className={`rounded-full px-6 py-3 text-lg font-semibold ${
-                                userRole === "admin"
-                                    ? "bg-gradient-to-r from-primary to-primary-600 text-white shadow-lg"
-                                    : "border-2 border-gray-300 text-slate-700 hover:border-primary hover:bg-primary/5"
-                            }`}
-                        >
-                            <Users className="mr-2 h-5 w-5" />
-                            Admin View
-                        </Button>
-                        <Button
-                            onClick={() => setUserRole("agent")}
-                            variant={
-                                userRole === "agent" ? "default" : "outline"
-                            }
-                            className={`rounded-full px-6 py-3 text-lg font-semibold ${
-                                userRole === "agent"
-                                    ? "bg-gradient-to-r from-accent to-accent-600 text-white shadow-lg"
-                                    : "border-2 border-gray-300 text-slate-700 hover:border-accent hover:bg-accent/5"
-                            }`}
-                        >
-                            <Home className="mr-2 h-5 w-5" />
-                            Agent View
-                        </Button>
-                    </div>
-
                     <Tabs
                         value={activeTab}
                         onValueChange={setActiveTab}
@@ -138,17 +109,17 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                             </TabsTrigger>
                         </TabsList>
 
-                        {userRole === "admin" && (
+                        {canAccessUserManagement &&(
                             <TabsContent value="users" className="mt-8">
                                 <UserManagement />
                             </TabsContent>
                         )}
-                        <TabsContent value="properties" className="mt-8">
+                        {canAccessProperties && <TabsContent value="properties" className="mt-8">
                             <PropertyManagement userRole={userRole} />
-                        </TabsContent>
-                        <TabsContent value="contacts" className="mt-8">
+                        </TabsContent>}
+                        {canAccessContacts && <TabsContent value="contacts" className="mt-8">
                             <ContactSubmissions />
-                        </TabsContent>
+                        </TabsContent>}
                     </Tabs>
                 </div>
             </main>
