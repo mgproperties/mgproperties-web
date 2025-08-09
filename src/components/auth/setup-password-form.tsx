@@ -34,7 +34,6 @@ export function SetupPasswordForm() {
           const refreshToken = hashParams.get('refresh_token')
           const type = hashParams.get('type')
           
-          console.log('Hash params:', { accessToken: !!accessToken, refreshToken: !!refreshToken, type })
           
           if (accessToken && refreshToken && type === 'invite') {
             // Set the session manually from the hash parameters
@@ -43,7 +42,6 @@ export function SetupPasswordForm() {
               refresh_token: refreshToken
             })
             
-            console.log('Set session result:', { data: !!data.session, error })
             
             if (error) {
               setError('Failed to establish session: ' + error.message)
@@ -52,7 +50,6 @@ export function SetupPasswordForm() {
             
             if (data.session?.user) {
               setUser(data.session.user)
-              console.log('User set:', data.session.user.email)
             } else {
               setError('No user found in session')
             }
@@ -112,13 +109,6 @@ export function SetupPasswordForm() {
         setError(updateError.message)
         return
       }
-
-      await supabase.from('profiles').upsert({
-        id: user.id,
-        name: user.user_metadata?.name || user.email,
-        role: user.user_metadata?.role || 'agent',
-        email: user.email
-      })
 
       // Redirect to admin dashboard
       router.push('/admin?message=welcome')

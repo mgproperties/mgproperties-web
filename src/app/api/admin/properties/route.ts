@@ -108,13 +108,7 @@ export async function POST(request: NextRequest) {
                         "featured",
                         "priceReduced",
                         "features",
-                        "propertyType",
-                        "images",
-                        "imageCount",
-                        "listedOn",
-                        "daysOnMarket",
-                        "openHouse",
-                        "agent"
+                        "propertyType"
                     ) VALUES (
                         ${body.title},
                         ${body.description},
@@ -128,13 +122,7 @@ export async function POST(request: NextRequest) {
                         ${body.featured},
                         ${body.priceReduced},
                         ${body.features},
-                        ${body.propertyType},
-                        ${body.images || []},
-                        ${body.imageCount || 0},
-                        ${body.listedOn || new Date().toISOString().split('T')[0]},
-                        ${body.daysOnMarket || 0},
-                        ${body.openHouse || ''},
-                        ${body.agent || user.email || ''}
+                        ${body.propertyType}
                     )
                     RETURNING "propertyID";
                 `;
@@ -162,11 +150,7 @@ export async function POST(request: NextRequest) {
                         "featured" = ${body.featured},
                         "priceReduced" = ${body.priceReduced},
                         "features" = ${body.features},
-                        "propertyType"= ${body.propertyType},
-                        "images" = ${body.images || []},
-                        "imageCount" = ${body.imageCount || 0},
-                        "openHouse" = ${body.openHouse || ''},
-                        "agent" = ${body.agent || user.email || ''}
+                        "propertyType"= ${body.propertyType}
                     WHERE "propertyID" = ${body.propertyID}
                     RETURNING "propertyID";
                 `;

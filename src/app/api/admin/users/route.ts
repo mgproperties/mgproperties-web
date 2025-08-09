@@ -101,17 +101,6 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // Send invitation email
-    //   const { data: inviteData, error: inviteError } = await adminSupabase.auth.admin.inviteUserByEmail(email, {
-    //     redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/setup-password`,
-    //     data: {
-    //       name: name,
-    //       role: role,
-    //       invited_by: user.email
-    //     }
-    //   })
-    console.log("Users checked ")
-
       const { data: inviteData, error: inviteError } = await adminSupabase.auth.admin.inviteUserByEmail(email, {
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/setup-password`
         })

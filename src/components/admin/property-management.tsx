@@ -52,6 +52,7 @@ interface ValidationErrors {
     location?: string;
     beds?: string;
     baths?: string;
+    description?: string;
     sqm?: string;
     images?: string;
     status?: string;
@@ -66,6 +67,74 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
     const [properties, setProperties] = useState<PropertyData[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [errors, setErrors] = useState<ValidationErrors>({});
+
+    const validateForm = (): ValidationErrors => {
+        const newErrors: ValidationErrors = {}
+        if (!newProperty.title.trim()) {
+            newErrors.title = "Title is required"
+        }
+
+        const priceRegex = /^P(?:\d{1,3}(?:,\d{3})+|\d{1,3})$/;
+
+        if(!newProperty.price.trim()){
+            newErrors.price = "Price is required"
+        } else if (!priceRegex.test(newProperty.price)){
+            newErrors.price = "Enter amount in Pula (e.g., P1,000 or P999). Use commas for thousands, no decimals."
+        }
+
+        const locationRegex = /^[A-Z][a-z0-9]+(?:[ -][A-Z][a-z0-9]+)*$/;
+
+        if (!newProperty.location.trim()) {
+            newErrors.location = "Location is required"
+        } else if (!locationRegex.test(newProperty.location)){
+            newErrors.location = "Capitalize each word (e.g., Old Naledi, Mochudi-West)."
+        }
+
+        if (!newProperty.beds === undefined || newProperty.beds === null){
+            newErrors.beds = "Number of beds is required"
+        } else if (!Number.isInteger(newProperty.beds || newProperty.beds <= 0)) {
+            newErrors.beds = "Enter a valid positive integer for beds";
+        }
+
+        if (!newProperty.baths === undefined || newProperty.baths === null){
+            newErrors.baths = "Number of baths is required"
+        } else if (!Number.isInteger(newProperty.baths || newProperty.baths <= 0)) {
+            newErrors.baths = "Enter a valid positive integer for baths";
+        }
+
+        if (!newProperty.sqm === undefined || newProperty.sqm === null){
+            newErrors.sqm = "Area is required"
+        } else if (!Number.isInteger(newProperty.sqm || newProperty.sqm <= 0)) {
+            newErrors.sqm = "Enter a valid positive integer for area";
+        }
+
+        if (!newProperty.description.trim()) {
+            newErrors.description = "Description is required";
+        } else if (newProperty.description.trim().length < 10) {
+            newErrors.description = "Description must be at least 10 characters";
+        }
+
+        if(newProperty.originalPrice?.trim()){
+            if(!priceRegex.test(newProperty.originalPrice)){
+                newErrors.originalPrice = "Enter amount in Pula (e.g., P1,000 or P999). Use commas for thousands, no decimals."
+            }
+        }
+
+        const featureRegex = /^[A-Z][a-z0-9]+(?:[ -][A-Z][a-z0-9]+)*$/;
+
+        if (Array.isArray(newProperty.features) && newProperty.features.length > 0) {
+            const invalidFeature = newProperty.features.find(
+                (feature) => !featureRegex.test(feature)
+            );
+            if (invalidFeature) {
+                newErrors.features = "Capitalize each word in features (e.g., Pool, Garage-1)";
+            }
+        }
+
+
+        return newErrors;
+    }
     
         const fetchProperties = async () => {
             try {
@@ -180,6 +249,14 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
     };
 
     const handleSaveProperty = async () => {
+
+        const formErrors = validateForm();
+        setErrors(formErrors)
+
+        if (Object.keys(formErrors).length > 0){
+            return;
+        }
+
         setIsSaving(true);
         try{
             const response = await fetch('api/admin/properties', {
@@ -206,6 +283,8 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                     }
                 }
                 await fetchProperties();
+
+                setErrors({});
             }
         } catch (error){
             console.error("Could not save property to the database: ", error);
@@ -323,8 +402,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                 title: e.target.value,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                        className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.title ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="price">Price</Label>
@@ -337,8 +419,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                 price: e.target.value,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                        className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.price ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.price && <p className="text-red-600 text-sm mt-1">{errors.price}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="location">Location</Label>
@@ -351,8 +436,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                 location: e.target.value,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                        className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.location ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.location && <p className="text-red-600 text-sm mt-1">{errors.location}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="beds">Bedrooms</Label>
@@ -369,8 +457,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                     ) || 0,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                        className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.beds ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.beds && <p className="text-red-600 text-sm mt-1">{errors.beds}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="baths">Bathrooms</Label>
@@ -387,8 +478,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                     ) || 0,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                        className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.baths ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.baths && <p className="text-red-600 text-sm mt-1">{errors.baths}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="sqm">Area (sqm)</Label>
@@ -402,8 +496,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                 sqm: Number.parseInt(e.target.value) || 0,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                        className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.sqm ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.sqm && <p className="text-red-600 text-sm mt-1">{errors.sqm}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="priceReduced">Price Reduced</Label>
@@ -436,9 +533,12 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                     originalPrice: e.target.value,
                                                 })
                                             }
-                                            className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary"
+                                            className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.originalPrice ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                             placeholder="Enter original price"
                                         />
+                                        {errors.originalPrice && <p className="text-red-600 text-sm mt-1">{errors.originalPrice}</p>}
                                     </div>
                                 )}
                                 <div className="space-y-2">
@@ -599,6 +699,9 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                     </div>
                                 </div>
                                 {/* Add new image upload section before description */}
+                                {newProperty.images?.length >= 15 && (
+                                    <p className="text-red-600 text-sm mt-1">Maximum 15 images allowed</p>
+                                )}
                                 <div className="space-y-2 col-span-2">
                                     <Label htmlFor="images">
                                         Property Images
@@ -607,6 +710,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                         <input
                                             type="file"
                                             id="images"
+                                            disabled={newProperty.images?.length >= 15}
                                             multiple
                                             accept="image/*"
                                             className="hidden"
@@ -706,8 +810,11 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                                 description: e.target.value,
                                             })
                                         }
-                                        className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary min-h-[100px]"
+                                         className={`rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
+                                            errors.description ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        }`}
                                     />
+                                    {errors.description && <p className="text-red-600 text-sm mt-1">{errors.description}</p>}
                                 </div>
                             </div>
                         </div>

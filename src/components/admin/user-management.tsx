@@ -366,10 +366,11 @@ export function UserManagement() {
                             </Button>
                             <Button
                                 onClick={handleSaveUser}
-                                className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md"
+                                disabled={isSaving}
+                                className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md disabled:opacity-50"
                             >
                                 <Save className="mr-2 h-4 w-4" />
-                                {isSaving ? 'Saving' : 'Save Changes' }
+                                {isSaving ? 'Saving...' : 'Save Changes' }
                             </Button>
                         </DialogFooter>
                     </DialogContent>
