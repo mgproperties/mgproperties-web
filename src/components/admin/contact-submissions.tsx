@@ -37,14 +37,16 @@ export function ContactSubmissions() {
     const [selectedSubmission, setSelectedSubmission] =
         useState<ContactSubmission | null>(null);
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const fetchSubmissions = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('api/admin/submissions', {
-                method: 'GET',
+            const response = await fetch("api/admin/submissions", {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
-                }
+                    "Content-Type": "application/json",
+                },
             });
 
             const result: ContactSubmission[] = await response.json();
@@ -52,6 +54,8 @@ export function ContactSubmissions() {
             setSubmissions(result);
         } catch (error) {
             console.error("Error fetching submissions: ", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -63,6 +67,16 @@ export function ContactSubmissions() {
         setSelectedSubmission(submission);
         setIsViewDialogOpen(true);
     };
+
+    if (loading) {
+        return (
+            <Card className="bg-white rounded-3xl border-0 shadow-lg">
+                <CardContent className="p-8 text-center">
+                    <div>Loading submissions...</div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card className="bg-white rounded-3xl border-0 shadow-lg">

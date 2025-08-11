@@ -78,6 +78,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [errors, setErrors] = useState<ValidationErrors>({});
+    const [loading, setLoading] = useState(true);
 
     const validateForm = (): ValidationErrors => {
         const newErrors: ValidationErrors = {};
@@ -158,6 +159,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
     };
 
     const fetchProperties = async () => {
+        setLoading(true); // Explicitly set loading to true at the start
         try {
             const response = await fetch("api/properties", {
                 method: "GET",
@@ -174,9 +176,16 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                     daysOnMarket: calculateDays(property.listedOn),
                 }));
                 setProperties(updatedProperties);
+            } else {
+                console.error(
+                    "Failed to fetch properties:",
+                    response.statusText
+                );
             }
         } catch (error) {
             console.error("Error fetching properties: ", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -321,6 +330,16 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
         }
         setIsDialogOpen(false);
     };
+
+    if (loading) {
+        return (
+            <Card className="bg-white rounded-3xl border-0 shadow-lg">
+                <CardContent className="p-8 text-center">
+                    <div>Loading properties...</div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card className="bg-white rounded-3xl border-0 shadow-lg">
