@@ -43,10 +43,10 @@ export function AdminDashboard({ user, profile }: AdminDashboardProps) {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Navbar />
+            <Navbar handleLogout={handleLogout} user={user} />
             <main className="flex-1 py-24 bg-gradient-to-b from-slate-100 to-slate-200 relative overflow-hidden">
                 {/* Logout button */}
-                <div className="fixed top-4 right-4 z-50">
+                {/* <div className="fixed top-4 right-4 z-50">
                     <Button
                         onClick={handleLogout}
                         variant="outline"
@@ -56,7 +56,7 @@ export function AdminDashboard({ user, profile }: AdminDashboardProps) {
                         <LogOut className="h-4 w-4 mr-2" />
                         Logout
                     </Button>
-                </div>
+                </div> */}
 
                 {/* Soft geometric background */}
                 <div className="absolute inset-0">
