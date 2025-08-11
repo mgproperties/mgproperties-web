@@ -37,7 +37,7 @@ export function PropertyImageCarousel({
     return (
         <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl border border-gray-200">
             {/* Main Image */}
-            <div className="aspect-video md:aspect-[16/9] lg:aspect-[21/9] w-full">
+            <div className="aspect-video md:aspect-[21/9] w-full">
                 <Image
                     src={images[currentImageIndex] || "/placeholder.svg"}
                     alt={`${title} - Image ${currentImageIndex + 1}`}

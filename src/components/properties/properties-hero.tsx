@@ -88,7 +88,9 @@ export function PropertiesHero() {
                                 <option value="">All Types</option>
                                 <option value="house">Residential</option>
                                 <option value="condo">Commercial</option>
-                                <option value="townhouse">Multi-residential</option>
+                                <option value="townhouse">
+                                    Multi-residential
+                                </option>
                                 <option value="villa">Agricultural</option>
                             </select>
                             <ChevronDown className="absolute right-4 top-1/2 transform translate-y-1 text-gray-500 h-5 w-5 pointer-events-none" />
@@ -148,26 +150,6 @@ export function PropertiesHero() {
                                 <SlidersHorizontal className="h-5 w-5 text-primary" />
                             </Button>
                         </div>
-                    </div>
-
-                    {/* Quick Filters */}
-                    <div className="flex flex-wrap gap-3 mt-6 pt-6 border-t border-gray-200">
-                        {[
-                            "New Listings",
-                            "Price Reduced",
-                            "Open House",
-                            "Virtual Tour",
-                            "Luxury Homes",
-                            "Investment Properties",
-                        ].map((filter) => (
-                            <Badge
-                                key={filter}
-                                variant="secondary"
-                                className="px-4 py-2 hover:bg-primary/5 hover:text-primary cursor-pointer transition-colors bg-gray-100 text-gray-600 rounded-xl font-medium"
-                            >
-                                {filter}
-                            </Badge>
-                        ))}
                     </div>
                 </div>
 
