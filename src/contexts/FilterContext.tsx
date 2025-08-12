@@ -20,7 +20,15 @@ export interface PropertyData {
     features: string[];
     description: string;
     openHouse?: string;
-    agent: string
+    agent?: {
+        id: string;
+        name: string;
+        phone: string;
+        email: string;
+        image: string;
+        role: string;
+    } | null;
+    agent_id: string
 }
 
 export interface FilterState {

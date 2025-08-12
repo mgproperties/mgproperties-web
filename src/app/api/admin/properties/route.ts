@@ -25,7 +25,7 @@ interface PropertyData {
     features: string[];
     description: string;
     openHouse: string;
-    agent: string
+    agent_id: string;
 }
 
 // GET - Fetch all properties (Admin + Agent)
@@ -108,7 +108,8 @@ export async function POST(request: NextRequest) {
                         "featured",
                         "priceReduced",
                         "features",
-                        "propertyType"
+                        "propertyType",
+                        "agent_id"
                     ) VALUES (
                         ${body.title},
                         ${body.description},
@@ -122,7 +123,8 @@ export async function POST(request: NextRequest) {
                         ${body.featured},
                         ${body.priceReduced},
                         ${body.features},
-                        ${body.propertyType}
+                        ${body.propertyType},
+                        ${body.agent_id}
                     )
                     RETURNING "propertyID";
                 `;
@@ -150,7 +152,8 @@ export async function POST(request: NextRequest) {
                         "featured" = ${body.featured},
                         "priceReduced" = ${body.priceReduced},
                         "features" = ${body.features},
-                        "propertyType"= ${body.propertyType}
+                        "propertyType"= ${body.propertyType},
+                        "agent_id" = ${body.agent_id}
                     WHERE "propertyID" = ${body.propertyID}
                     RETURNING "propertyID";
                 `;

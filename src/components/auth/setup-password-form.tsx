@@ -12,6 +12,7 @@ import { Loader2, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react'
 import { User } from '@supabase/supabase-js'
 
 
+
 export function SetupPasswordForm() {
   const [user, setUser] = useState<User | null>(null)
   const [tokenLoading, setTokenLoading] = useState(true)
@@ -69,6 +70,11 @@ export function SetupPasswordForm() {
       handleAuthCallback()
     }, [])
 
+  const avatarValidation = {
+    isSelected: !!avatar
+  };
+
+
   // Password validation
   const passwordValidation = {
     minLength: password.length >= 12,
@@ -78,6 +84,14 @@ export function SetupPasswordForm() {
     hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
   }
 
+  const phoneRegex = /^\+?[1-9][0-9]{7,14}$/;
+
+  const phoneValidation = {
+    characterMatch: phoneRegex.test(phone)
+  }
+
+  const isAvatarValid = Object.values(avatarValidation).every(Boolean)
+  const isPhoneValid = Object.values(phoneValidation).every(Boolean)
   const isPasswordValid = Object.values(passwordValidation).every(Boolean)
   const passwordsMatch = password === confirmPassword && password.length > 0
 
@@ -86,6 +100,16 @@ export function SetupPasswordForm() {
 
     if(!user){
       setError('User not found')
+      return
+    }
+
+    if(!isPhoneValid){
+      setError('Please enter a valid phone number')
+      return
+    }
+
+    if (!isAvatarValid) {
+      setError('Please upload a profile picture')
       return
     }
     
@@ -201,6 +225,18 @@ export function SetupPasswordForm() {
                 onChange={(e) => setPhone(e.target.value)}
               />
             </div>
+            <div className="space-y-2 text-sm">
+              {phone && (
+                <div className="flex items-center space-x-2">
+                  {phoneValidation.characterMatch ? 
+                    <CheckCircle className="h-4 w-4 text-green-500" /> : 
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  }
+                  <span className={phoneValidation.characterMatch ? 'text-green-600' : 'text-red-600'}>
+                    Enter 8–15 digits, may start with + (e.g. +26771234567)
+                  </span>
+                </div>)}
+            </div>
             <div className="space-y-2">
               <Label htmlFor="avatar">Profile Picture</Label>
               <Input
@@ -210,6 +246,17 @@ export function SetupPasswordForm() {
                 onChange={(e) => setAvatar(e.target.files?.[0] || null)}
               />
             </div>
+            {avatar && (
+              <div className="flex items-center space-x-2 text-sm">
+                {avatarValidation.isSelected ?
+                  <CheckCircle className="h-4 w-4 text-green-500" /> :
+                  <XCircle className="h-4 w-4 text-red-500" />  
+                }
+                <span className={avatarValidation.isSelected ? 'text-green-600' : 'text-red-600'}>
+                  Profile picture selected
+                </span>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="password">New Password</Label>
               <div className="relative">
@@ -315,7 +362,7 @@ export function SetupPasswordForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || !isPasswordValid || !passwordsMatch}
+              disabled={loading || !isPasswordValid || !passwordsMatch || !isPhoneValid || !isAvatarValid}
             >
               {loading ? (
                 <>

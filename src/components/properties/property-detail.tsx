@@ -28,21 +28,23 @@ interface Property {
     images: string[];
     imageCount: number;
     status: string;
-    propertyType: string;
     featured: boolean;
     listedOn: string;
+    propertyType?: string;
     daysOnMarket?: number;
     priceReduced: boolean;
     features: string[];
     description: string;
     openHouse?: string;
-    agent: {
+    agent?: {
+        id: string;
         name: string;
-        role: string;
-        image: string;
         phone: string;
         email: string;
-    };
+        image: string;
+        role: string;
+    } | null;
+    agent_id: string
 }
 
 interface PropertyDetailProps {
@@ -192,47 +194,56 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
                     </div>
 
                     {/* Right Column - Agent Contact */}
-                    <div>
+                    {<div>
                         <Card className="bg-white rounded-3xl border-0 shadow-lg sticky top-28">
-                            <CardContent className="p-8 text-center">
-                                <h3 className="text-2xl font-bold text-slate-800 mb-6">
-                                    Contact Agent
-                                </h3>
+                        <CardContent className="p-8 text-center">
+                            <h3 className="text-2xl font-bold text-slate-800 mb-6">
+                            Contact Agent
+                            </h3>
+                            
+                            {property.agent ? (
+                            <>
                                 <Image
-                                    src={
-                                        property.agent?.image ||
-                                        "/placeholder.svg"
-                                    }
-                                    alt={property.agent?.name || "John Doe"}
-                                    width={96}
-                                    height={96}
-                                    className="w-24 h-24 rounded-full mx-auto mb-4 object-cover ring-4 ring-primary/20"
+                                src={property.agent.image}
+                                alt={property.agent.name}
+                                width={96}
+                                height={96}
+                                className="w-24 h-24 rounded-full mx-auto mb-4 object-cover ring-4 ring-primary/20"
                                 />
                                 <h4 className="text-xl font-bold text-slate-800 mb-1">
-                                    {property.agent?.name || "John Doe"}
+                                {property.agent.name}
                                 </h4>
                                 <p className="text-primary font-semibold mb-6">
-                                    {property.agent?.role || "Agent"}
+                                {property.agent.role}
                                 </p>
 
                                 <div className="space-y-4 mb-8">
-                                    <div className="flex items-center justify-center gap-3 text-slate-700">
-                                        <Phone className="h-5 w-5 text-primary" />
-                                        <span>{property.agent?.phone || "71234567"}</span>
-                                    </div>
-                                    <div className="flex items-center justify-center gap-3 text-slate-700">
-                                        <Mail className="h-5 w-5 text-primary" />
-                                        <span>{property.agent?.email || "info@mgproperties.co.bw"}</span>
-                                    </div>
+                                <div className="flex items-center justify-center gap-3 text-slate-700">
+                                    <Phone className="h-5 w-5 text-primary" />
+                                    <span>{property.agent.phone}</span>
+                                </div>
+                                <div className="flex items-center justify-center gap-3 text-slate-700">
+                                    <Mail className="h-5 w-5 text-primary" />
+                                    <span>{property.agent.email}</span>
+                                </div>
                                 </div>
 
                                 <Button className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-3 font-semibold group">
-                                    <User className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
-                                    Contact Agent
+                                <User className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+                                Contact Agent
                                 </Button>
-                            </CardContent>
+                            </>
+                            ) : (
+                            <div className="text-gray-500">
+                                <p>No agent assigned to this property</p>
+                                <Button className="w-full mt-4 bg-gradient-to-r from-primary to-primary-600 text-white rounded-2xl py-3">
+                                Contact Us
+                                </Button>
+                            </div>
+                            )}
+                        </CardContent>
                         </Card>
-                    </div>
+                    </div>}
                 </div>
             </div>
         </section>

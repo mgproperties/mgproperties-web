@@ -8,6 +8,15 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY! // Service role key (more permissions than anon key)
 );
 
+function getAvatarUrl(avatarPath: string | null) {
+  if (!avatarPath) return '/placeholder.svg'
+  const { data } = supabase.storage
+    .from('avatars')
+    .getPublicUrl(avatarPath)
+
+    return data.publicUrl
+}
+
 export async function GET(request: NextRequest) {
   try {
     // Extract query parameters from the URL
@@ -23,6 +32,13 @@ export async function GET(request: NextRequest) {
           image_url,
           image_order,
           is_primary
+        ),
+        profiles!property_agent_id_fkey (
+          id,
+          name,
+          email,
+          phone,
+          avatar_url
         )
       `); // This joins with property_image table
 
@@ -77,12 +93,23 @@ export async function GET(request: NextRequest) {
         return data.publicUrl;
       });
 
+      const agent = property.profiles ? {
+        id: property.profiles.id,
+        name: property.profiles.name,
+        email: property.profiles.email,
+        phone: property.profiles.phone,
+        image: property.profiles.avatar_url ? getAvatarUrl(property.profiles.avatar_url) : '/placeholder.svg',
+        role: 'Real Estate Agent'
+      } : null;
+
       return {
         ...property, // Keep all original property data
         images: imageUrls, // Add array of image URLs
         imageCount: imageUrls.length, // Add count for display
+        agent: agent,
         // Remove the joined data since we've processed it
         property_image: undefined,
+        profiles: undefined,
       };
     }) || [];
 

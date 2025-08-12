@@ -34,6 +34,7 @@ import {
     uploadPropertyImages,
     deletePropertyImages,
 } from "@/utils/imageUpload";
+import { User } from "@supabase/supabase-js";
 
 function calculateDays(timestamp: string): number {
     const inputDate = new Date(timestamp);
@@ -53,6 +54,7 @@ function calculateDays(timestamp: string): number {
 }
 
 interface PropertyManagementProps {
+    user: User
     userRole: "admin" | "agent";
 }
 
@@ -70,14 +72,40 @@ interface ValidationErrors {
     featured?: string;
     propertyType?: string;
     features?: string;
-    agent?: string;
 }
 
-export function PropertyManagement({ userRole }: PropertyManagementProps) {
+export function PropertyManagement({ user, userRole }: PropertyManagementProps) {
     const [properties, setProperties] = useState<PropertyData[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [errors, setErrors] = useState<ValidationErrors>({});
+    const [agents, setAgents] = useState<Array<{id: string, name: string, email: string}>>([]);
+
+    useEffect(() => {
+        console.log("Agents: ", agents)
+    }, [agents])
+    
+    useEffect(() => {
+        if (userRole === 'admin'){
+            fetchAgents()
+        }
+    }, [userRole])
+
+    const fetchAgents = async () => {
+        try {
+            const response = await fetch('api/admin/users')
+            const data = await response.json()
+            console.log("Data: ", data)
+
+            if (data && Array.isArray(data.users)){
+                const agentsList = data.users.filter((u: any) => u.role === 'agent')
+                console.log("Agents being filtered through: ", agentsList)
+                setAgents(agentsList)
+            }
+        } catch (error){
+            console.error("Error fetching agents: ", error)
+        }
+    }
 
     const validateForm = (): ValidationErrors => {
         const newErrors: ValidationErrors = {};
@@ -159,7 +187,9 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
     const fetchProperties = async () => {
         try {
-            const response = await fetch("api/properties", {
+            const endpoint = userRole === 'admin' ? 'api/properties' : 'api/admin/my-properties'
+
+            const response = await fetch(endpoint, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -206,7 +236,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
         features: [],
         featured: false,
         listedOn: "",
-        agent: "",
+        agent_id: "",
     });
 
     const handleCreateProperty = () => {
@@ -229,7 +259,7 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
             features: [],
             featured: false,
             listedOn: "",
-            agent: "",
+            agent_id: "",
         });
         setIsDialogOpen(true);
     };
@@ -283,15 +313,19 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
 
         setIsSaving(true);
         try {
+
+            const propertyData = {
+                ...newProperty,
+                agent_id: userRole === 'admin' ? newProperty.agent_id : user.id,
+                propertyID: editingProperty?.propertyID
+            }
+
             const response = await fetch("api/admin/properties", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    ...newProperty,
-                    propertyID: editingProperty?.propertyID,
-                }),
+                body: JSON.stringify(propertyData)
             });
 
             const result = await response.json();
@@ -666,14 +700,14 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-2">
+                                {userRole === 'admin' && <div className="space-y-2">
                                     <Label htmlFor="agent">Agent</Label>
                                     <Select
-                                        value={newProperty.agent}
+                                        value={newProperty.agent_id}
                                         onValueChange={(value) =>
                                             setNewProperty({
                                                 ...newProperty,
-                                                agent: value,
+                                                agent_id: value,
                                             })
                                         }
                                     >
@@ -681,18 +715,14 @@ export function PropertyManagement({ userRole }: PropertyManagementProps) {
                                             <SelectValue placeholder="Select agent" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="John Stewards">
-                                                John Stewards
-                                            </SelectItem>
-                                            <SelectItem value="Samantha Simone">
-                                                Samantha Simone
-                                            </SelectItem>
-                                            <SelectItem value="Olebile Moremong">
-                                                Olebile Moremong
-                                            </SelectItem>
+                                            {agents.map((agent) => (
+                                                <SelectItem key={agent.id} value={agent.id}>
+                                                    {agent.name}
+                                                </SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </div>}
                                 <div className="space-y-2">
                                     <Label htmlFor="propertyType">
                                         Property Type

@@ -3,34 +3,8 @@ import { PropertyDetail } from "@/components/properties/property-detail";
 import { Footer } from "@/components/layout/footer";
 import { notFound } from 'next/navigation';
 import { headers } from "next/headers";
+import { PropertyData } from "@/contexts/FilterContext";
 
-interface PropertyData {
-    propertyID: number;
-    title: string;
-    price: string;
-    originalPrice?: string;
-    location: string;
-    beds: number;
-    baths: number;
-    sqm: number;
-    images: string[];
-    imageCount: number;
-    status: string;
-    featured: boolean;
-    listedOn: string;
-    daysOnMarket?: number;
-    priceReduced: boolean;
-    features: string[];
-    description: string;
-    openHouse?: string;
-    agent: {
-        name: string;
-        role: string;
-        image: string;
-        phone: string;
-        email: string;
-    };
-}
 
 function calculateDays(timestamp: string): number {
     const inputDate = new Date(timestamp);
@@ -62,8 +36,6 @@ async function fetchProperty(propertyID: string): Promise<PropertyData | null> {
         const host = (await headersList).get('host');
         const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
         const baseUrl = `${protocol}://${host}`;
-        console.log("Base URL: ", baseUrl);
-
 
         const response = await fetch(`${baseUrl}/api/properties?propertyID=${propertyID}`, {
             method: 'GET',
@@ -96,15 +68,11 @@ async function fetchProperty(propertyID: string): Promise<PropertyData | null> {
     }
 }
 
-export default async function PropertyDetailPage({
-    params,
-}: {
-    params: { id: string };
-}) {
-    console.log("The parameter: ", params);
-    
+export default async function PropertyDetailPage( { params }: { params: Promise<{ id:string }>}) {
+    const { id } = await params
+   
     // Fetch the property data
-    const property = await fetchProperty(params.id);
+    const property = await fetchProperty(id);
     
     // If property not found, trigger Next.js 404 page
     if (!property) {

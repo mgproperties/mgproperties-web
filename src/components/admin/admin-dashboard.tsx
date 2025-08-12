@@ -115,7 +115,7 @@ export function AdminDashboard({ user, profile }: AdminDashboardProps) {
                         )}
                         {canAccessProperties && (
                             <TabsContent value="properties" className="mt-8">
-                                <PropertyManagement userRole={userRole} />
+                                <PropertyManagement user={user} userRole={userRole} />
                             </TabsContent>
                         )}
                         {canAccessContacts && (
