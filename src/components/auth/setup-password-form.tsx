@@ -21,6 +21,8 @@ export function SetupPasswordForm() {
   const [error, setError] = useState<string | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [phone, setPhone] = useState('')
+  const [avatar, setAvatar] = useState<File | null>(null);
   const router = useRouter()
   const supabase = createClient()
 
@@ -110,6 +112,35 @@ export function SetupPasswordForm() {
         return
       }
 
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+            phone: phone || null,
+            updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+
+      if(profileError){
+        console.error('Profile update error:', profileError)
+      }
+
+    if (avatar) {
+      const fileExt = avatar.name.split('.').pop()
+      const fileName = `${user.id}/avatar.${fileExt}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, avatar, { upsert: true})
+
+      if (!uploadError) {
+        await supabase
+          .from('profiles')
+          .update({ avatar_url: fileName })
+          .eq('id', user.id)
+      }
+    }
+        
+
       // Redirect to admin dashboard
       router.push('/admin?message=welcome')
       
@@ -147,10 +178,10 @@ export function SetupPasswordForm() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Set Up Your Password
+            Set Up Your Account
           </CardTitle>
           <CardDescription className="text-center">
-            Welcome! Please set up your password for <strong>{user?.email}</strong>
+            Welcome! Please set up your profile picture, phone number, and password for <strong>{user?.email}</strong>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -160,7 +191,25 @@ export function SetupPasswordForm() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="71234567"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="avatar">Profile Picture</Label>
+              <Input
+                id="avatar"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setAvatar(e.target.files?.[0] || null)}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="password">New Password</Label>
               <div className="relative">
