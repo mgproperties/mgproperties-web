@@ -181,7 +181,7 @@ export function PropertiesGrid() {
                                         </div>
 
                                         {/* Action buttons */}
-                                        <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        {/* <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                             <Button
                                                 size="icon"
                                                 className="bg-white/90 hover:bg-white text-slate-700 rounded-xl shadow-lg backdrop-blur-sm"
@@ -194,7 +194,7 @@ export function PropertiesGrid() {
                                             >
                                                 <Share2 className="h-4 w-4" />
                                             </Button>
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     <CardContent className="p-6">

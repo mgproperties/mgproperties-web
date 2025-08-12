@@ -13,6 +13,7 @@ import {
     ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePropertiesContext } from "@/contexts/PropertiesContext";
 import { useEffect } from "react";
 
@@ -94,7 +95,7 @@ export function FeaturedProperties() {
                                 </Badge>
 
                                 {/* Action buttons */}
-                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                {/* <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <Button
                                         size="icon"
                                         className="bg-white/90 hover:bg-white text-slate-700 rounded-xl shadow-lg backdrop-blur-sm"
@@ -107,7 +108,7 @@ export function FeaturedProperties() {
                                     >
                                         <Share2 className="h-4 w-4" />
                                     </Button>
-                                </div>
+                                </div> */}
                             </div>
 
                             <CardContent className="p-8">
@@ -147,9 +148,14 @@ export function FeaturedProperties() {
                                     </div>
                                 </div>
 
-                                <Button className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-4 font-semibold">
-                                    View Details
-                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                <Button 
+                                    asChild
+                                    className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-4 font-semibold"
+                                >
+                                    <Link href={`/properties/${property.propertyID}`}>
+                                        View Details
+                                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform"/>
+                                    </Link>
                                 </Button>
                             </CardContent>
                         </Card>
@@ -158,12 +164,15 @@ export function FeaturedProperties() {
 
                 <div className="text-center mt-16">
                     <Button
+                        asChild
                         variant="outline"
                         size="lg"
                         className="border-2 border-primary/30 text-slate-700 hover:bg-primary hover:text-white transition-all px-8 py-4 text-lg rounded-2xl font-semibold shadow-lg hover:shadow-xl"
                     >
-                        View All Properties
-                        <ArrowRight className="ml-2 h-5 w-5" />
+                        <Link href={`/properties`}>
+                            View All Properties
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>                     
                     </Button>
                 </div>
             </div>
