@@ -134,7 +134,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
         if (!newProperty.beds === undefined || newProperty.beds === null) {
             newErrors.beds = "Number of beds is required";
         } else if (
-            !Number.isInteger(newProperty.beds || newProperty.beds <= 0)
+            !Number.isInteger(newProperty.beds || newProperty.beds < 0)
         ) {
             newErrors.beds = "Enter a valid positive integer for beds";
         }
@@ -142,7 +142,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
         if (!newProperty.baths === undefined || newProperty.baths === null) {
             newErrors.baths = "Number of baths is required";
         } else if (
-            !Number.isInteger(newProperty.baths || newProperty.baths <= 0)
+            !Number.isInteger(newProperty.baths || newProperty.baths < 0)
         ) {
             newErrors.baths = "Enter a valid positive integer for baths";
         }
