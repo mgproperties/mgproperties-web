@@ -106,7 +106,6 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
 
             if (data && Array.isArray(data.users)){
                 const agentsList = data.users.filter((u: any) => u.role === 'agent')
-                console.log("Agents being filtered through: ", agentsList)
                 setAgents(agentsList)
             }
         } catch (error){

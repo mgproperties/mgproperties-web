@@ -92,6 +92,8 @@ export async function POST(request: NextRequest) {
             
             // Parse the JSON body from the request
             const body: PropertyData = await request.json();
+
+            const safeAgentId = body.agent_id === '' ? null : body.agent_id;
             
             if(!body.propertyID){
                 const result = await sql`
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
                         ${body.priceReduced},
                         ${body.features},
                         ${body.propertyType},
-                        ${body.agent_id}
+                        ${safeAgentId}
                     )
                     RETURNING "propertyID";
                 `;
@@ -153,7 +155,7 @@ export async function POST(request: NextRequest) {
                         "priceReduced" = ${body.priceReduced},
                         "features" = ${body.features},
                         "propertyType"= ${body.propertyType},
-                        "agent_id" = ${body.agent_id}
+                        "agent_id" = ${safeAgentId}
                     WHERE "propertyID" = ${body.propertyID}
                     RETURNING "propertyID";
                 `;
