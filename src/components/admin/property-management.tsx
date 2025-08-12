@@ -1,5 +1,5 @@
 "use client";
-
+import { usePropertiesContext } from "@/contexts/PropertiesContext";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,15 +75,23 @@ interface ValidationErrors {
 }
 
 export function PropertyManagement({ user, userRole }: PropertyManagementProps) {
-    const [properties, setProperties] = useState<PropertyData[]>([]);
+    //const [properties, setProperties] = useState<PropertyData[]>([]);
+
+    const {
+        allProperties: properties,
+        loading: propertiesLoading,
+        fetchProperties,
+        refetchProperties
+    } = usePropertiesContext();
+
     const [isSaving, setIsSaving] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [agents, setAgents] = useState<Array<{id: string, name: string, email: string}>>([]);
 
     useEffect(() => {
-        console.log("Agents: ", agents)
-    }, [agents])
+        fetchProperties(userRole, user.id);
+    }, [userRole, user.id, fetchProperties]);
     
     useEffect(() => {
         if (userRole === 'admin'){
@@ -95,7 +103,6 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
         try {
             const response = await fetch('api/admin/users')
             const data = await response.json()
-            console.log("Data: ", data)
 
             if (data && Array.isArray(data.users)){
                 const agentsList = data.users.filter((u: any) => u.role === 'agent')
@@ -185,34 +192,6 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
         return newErrors;
     };
 
-    const fetchProperties = async () => {
-        try {
-            const endpoint = userRole === 'admin' ? 'api/properties' : 'api/admin/my-properties'
-
-            const response = await fetch(endpoint, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            const result: PropertyData[] = await response.json();
-
-            if (response.ok) {
-                const updatedProperties = result.map((property) => ({
-                    ...property,
-                    daysOnMarket: calculateDays(property.listedOn),
-                }));
-                setProperties(updatedProperties);
-            }
-        } catch (error) {
-            console.error("Error fetching properties: ", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchProperties();
-    }, []);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingProperty, setEditingProperty] = useState<PropertyData | null>(
         null
@@ -293,7 +272,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
             const result = await response.json();
 
             if (response.ok) {
-                await fetchProperties();
+                await refetchProperties(userRole, user.id);
             }
         } catch (error) {
             console.error(
@@ -343,7 +322,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                         console.error("Error uploading images: ", imageError);
                     }
                 }
-                await fetchProperties();
+                await refetchProperties(userRole, user.id);
 
                 setErrors({});
             }
@@ -608,6 +587,29 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                             {errors.sqm}
                                         </p>
                                     )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="featured">
+                                        Featured
+                                    </Label>
+                                    <div className="flex items-center space-x-2">
+                                        <input
+                                            id="featured"
+                                            type="checkbox"
+                                            checked={newProperty.featured}
+                                            onChange={(e) =>
+                                                setNewProperty({
+                                                    ...newProperty,
+                                                    featured:
+                                                        e.target.checked
+                                                })
+                                            }
+                                            className="rounded border-gray-300"
+                                        />
+                                        <span className="text-sm text-gray-600">
+                                            Feature property on homepage
+                                        </span>
+                                    </div>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="priceReduced">

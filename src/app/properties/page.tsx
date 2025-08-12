@@ -7,20 +7,13 @@ import { PropertiesGrid } from "@/components/properties/properties-grid";
 import { Footer } from "@/components/layout/footer";
 import { useEffect, useState } from 'react';
 import { FilterContext, FilterState, PropertyData } from "@/contexts/FilterContext";
+import { usePropertiesContext } from "@/contexts/PropertiesContext";
 
-
-function calculateDays(timestamp: string): number {
-    const inputDate = new Date(timestamp);
-    const today = new Date();
-    const utcInput = Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate());
-    const utcToday = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
-    const millisecondsPerDay = 1000 * 60 * 60 * 24;
-    return Math.floor((utcToday - utcInput) / millisecondsPerDay) + 1;
-}
 
 export default function PropertiesPage() {
 
-    const [properties, setProperties] = useState<PropertyData[]>([]);
+    const { allProperties, fetchProperties, loading } = usePropertiesContext();
+
     const [filters, setFilters] = useState<FilterState>({
         features: [],
         propertyAge: '',
@@ -30,34 +23,18 @@ export default function PropertiesPage() {
         sortBy: 'newest'
     });
 
-    const fetchProperties = async () => {
-        try {
-            const response = await fetch('api/properties', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            const result: PropertyData[] = await response.json();
-
-            if (response.ok) {
-                const updatedProperties = result.map((property) => ({
-                    ...property,
-                    daysOnMarket: calculateDays(property.listedOn)
-                }));
-                setProperties(updatedProperties);
-            }
-        } catch (error) {
-            console.error("Error fetching properties: ", error);
-        }
-    };
-
+    
     useEffect(() => {
         fetchProperties();
-    }, []);
+    }, [fetchProperties]);
     return (
-        <FilterContext.Provider value={{ filters, setFilters, properties, setProperties }}>
+        <FilterContext.Provider value={{ 
+                filters, 
+                setFilters, 
+                properties: allProperties, 
+                setProperties: () => {},
+                loading 
+            }}>
             <div className="min-h-screen">
                 <Navbar />
                 <PropertiesHero />

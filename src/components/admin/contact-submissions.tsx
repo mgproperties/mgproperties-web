@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
+import { adminService } from "@/services/adminService";
 
 interface ContactSubmission {
     inquiryID: string;
@@ -40,20 +41,21 @@ export function ContactSubmissions() {
 
     const fetchSubmissions = async () => {
         try {
-            const response = await fetch('api/admin/submissions', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            const result: ContactSubmission[] = await response.json();
-
+            const result = await adminService.getContactSubmissions();
             setSubmissions(result);
         } catch (error) {
             console.error("Error fetching submissions: ", error);
         }
     };
+
+    const refreshSubmissions =  async () => {
+        try {
+            const result = await adminService.refreshContactSubmissions();
+            setSubmissions(result);
+        } catch (error) {
+            console.error("Error refreshing submissions: ", error);
+        }
+    }
 
     useEffect(() => {
         fetchSubmissions();
@@ -70,6 +72,15 @@ export function ContactSubmissions() {
                 <CardTitle className="text-2xl font-bold text-slate-800">
                     Contact Form Submissions
                 </CardTitle>
+                <Button
+                    onClick={refreshSubmissions}
+                    variant="outline"
+                    size="sm"
+                    /* disabled={loading} */
+                    className="rounded-xl"
+                >
+                    Refresh
+                </Button>
             </CardHeader>
             <CardContent>
                 <div className="overflow-x-auto">

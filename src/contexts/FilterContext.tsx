@@ -45,6 +45,7 @@ interface FilterContextType {
     setFilters: (filters: FilterState) => void;
     properties: PropertyData[];
     setProperties: (properties: PropertyData[]) => void;
+    loading?: boolean;
 }
 
 export const FilterContext = createContext<FilterContextType | undefined>(undefined);

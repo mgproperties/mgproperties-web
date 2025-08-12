@@ -28,6 +28,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Plus, Edit, Trash2, Save, XCircle } from "lucide-react";
+import { adminService } from "@/services/adminService";
 
 interface User {
     id: string;
@@ -93,20 +94,32 @@ export function UserManagement() {
     }, []);
 
     const fetchUsers = async () => {
+        setLoading(true)
+        setError(null)
         try {
-            const response = await fetch('api/admin/users')
-            if (response.ok) {
-                const data = await response.json();
-                setUsers(data.users);
-                setCurrentUser(data.currentUser);
-            } else {
-                setError('Failed to fetch users')
-            }
+            const data = await adminService.getUsers();
+            setUsers(data.users);
+            setCurrentUser(data.currentUser);
         } catch (error) {
             console.error('Failed to fetch users:', error)
             setError('Failed to fetch users')
         } finally {
             setLoading(false)
+        }
+    }
+
+    const refreshUsers = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await adminService.refreshUsers();
+            setUsers(data.users);
+            setCurrentUser(data.currentUser);
+        } catch (error){
+            console.error('Failed to refresh users: ', error);
+            setError('Failed to refresh users');
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -128,13 +141,10 @@ export function UserManagement() {
         }
         
         try {
-            const response = await fetch(`api/admin/users/${id}`, {
-                method: 'DELETE'
-            });
-
+            const response = await adminService.deleteUser(id);
             
             if (response.ok) {
-                fetchUsers(); // Refresh the list
+                await fetchUsers(); // Refresh the list
             } else {
                 console.error('Failed to delete user');
             }
@@ -163,32 +173,28 @@ export function UserManagement() {
         });
 
         try {
-            const url = editingUser ? `api/admin/users/${editingUser.id}` : 'api/admin/users';
-            const method = editingUser ? 'PUT' : 'POST';
+           let response, result;
 
-            const response = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newUser)
+           if (editingUser) {
+            ({ response, result } = await adminService.updateUser(editingUser.id, newUser))
+           } else{
+            ({ response, result } = await adminService.createUser(newUser))
+           }
+
+           if (response.ok) {
+            await fetchUsers();
+            setSaveStatus({
+                type: 'success',
+                message: result.message
             });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                fetchUsers();
-                setSaveStatus({
-                    type: 'success',
-                    message: result.message
-                })
-                setErrors({});
-                setIsDialogOpen(false);
-            } else {
-                setSaveStatus({
-                    type: 'error',
-                    message: result.error || 'An error occured while saving a new user'
-                })
-                console.error('Failed to save user');
-            }
+            setErrors({});
+            setIsDialogOpen(false);
+           } else {
+            setSaveStatus({
+                type: 'error',
+                message: result.error || 'An error occured while saving the user'
+            })
+           }
         } catch (error) {
             console.error('Failed to save user:', error);
             setSaveStatus({
@@ -216,6 +222,16 @@ export function UserManagement() {
                 <CardTitle className="text-2xl font-bold text-slate-800">
                     User Management
                 </CardTitle>
+                <div className="flex gap-2">
+                    <Button
+                        onClick={refreshUsers}
+                        variant="outline"
+                        size="sm"
+                        disabled={loading}
+                        className="rounded-xl"
+                    >
+                        Refresh
+                    </Button>
                 <Button
                     onClick={handleCreateUser}
                     className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md"
@@ -223,6 +239,7 @@ export function UserManagement() {
                     <Plus className="mr-2 h-4 w-4" />
                     Add User
                 </Button>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>

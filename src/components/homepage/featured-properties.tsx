@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,47 +13,29 @@ import {
     ArrowRight,
 } from "lucide-react";
 import Image from "next/image";
+import { usePropertiesContext } from "@/contexts/PropertiesContext";
+import { useEffect } from "react";
 
-const properties = [
-    {
-        id: 1,
-        title: "Modern Family Home",
-        price: "$750,000",
-        location: "Beverly Hills, CA",
-        beds: 4,
-        baths: 3,
-        sqft: "2,500",
-        image: "/placeholder.svg?height=300&width=400",
-        status: "For Sale",
-        featured: true,
-    },
-    {
-        id: 2,
-        title: "Downtown Luxury Condo",
-        price: "$1,200,000",
-        location: "Manhattan, NY",
-        beds: 2,
-        baths: 2,
-        sqft: "1,800",
-        image: "/placeholder.svg?height=300&width=400",
-        status: "New Listing",
-        featured: false,
-    },
-    {
-        id: 3,
-        title: "Suburban Villa",
-        price: "$950,000",
-        location: "Austin, TX",
-        beds: 5,
-        baths: 4,
-        sqft: "3,200",
-        image: "/placeholder.svg?height=300&width=400",
-        status: "For Sale",
-        featured: true,
-    },
-];
 
 export function FeaturedProperties() {
+    const { featuredProperties, loading, fetchProperties } = usePropertiesContext();
+
+    useEffect(() => {
+        fetchProperties();
+    }, [fetchProperties])
+
+    if (loading) {
+        return (
+            <section className="py-24 bg-gradient-to-b from-slate-50 to-green-50/30 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="text-center">
+                        <div className="text-lg text-slate-600">Loading featured properties...</div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className="py-24 bg-gradient-to-b from-slate-50 to-green-50/30 relative overflow-hidden">
             {/* Soft geometric background */}
@@ -81,14 +65,14 @@ export function FeaturedProperties() {
 
                 {/* Properties Grid - Magazine Style */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {properties.map((property) => (
+                    {featuredProperties.map((property) => (
                         <Card
-                            key={property.id}
+                            key={property.propertyID}
                             className="group overflow-hidden hover:shadow-2xl transition-all duration-500 border-0 bg-white rounded-3xl hover:scale-[1.02]"
                         >
                             <div className="relative overflow-hidden">
                                 <Image
-                                    src={property.image || "/placeholder.svg"}
+                                    src={property.images?.[0] || "/placeholder.svg"}
                                     alt={property.title}
                                     width={400}
                                     height={300}
@@ -158,7 +142,7 @@ export function FeaturedProperties() {
                                     <div className="flex items-center bg-gradient-to-r from-primary/5 to-accent/5 px-4 py-3 rounded-xl">
                                         <Square className="h-4 w-4 mr-2 text-primary" />
                                         <span className="text-sm font-semibold">
-                                            {property.sqft}
+                                            {property.sqm}
                                         </span>
                                     </div>
                                 </div>

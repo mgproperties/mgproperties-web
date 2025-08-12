@@ -24,7 +24,7 @@ function parsePrice(priceString: string): number {
 
 export function PropertiesGrid() {
 
-    const { filters, setFilters, properties, setProperties } = useFilterContext();
+    const { filters, setFilters, properties, setProperties, loading } = useFilterContext();
     const [currentPage, setCurrentPage] = useState(1);
     const propertiesPerPage = 6;
 
@@ -91,7 +91,17 @@ export function PropertiesGrid() {
         setCurrentPage(1);
     }, [filters]);
 
-
+    if (loading) {
+        return (
+            <section className="py-24 bg-gradient-to-b from-green-50/30 to-slate-50 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="text-center py-16">
+                        <div className="text-slate-600 text-lg">Loading properties...</div>
+                    </div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="py-24 bg-gradient-to-b from-green-50/30 to-slate-50 relative overflow-hidden">

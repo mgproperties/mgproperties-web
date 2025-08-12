@@ -220,7 +220,7 @@ export function SetupPasswordForm() {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="71234567"
+                placeholder="Enter phone number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
