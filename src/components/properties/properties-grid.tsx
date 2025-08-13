@@ -14,48 +14,61 @@ import {
     Camera,
     Calendar,
     ArrowRight,
+    Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { useFilterContext, PropertyData, FilterState } from "@/contexts/FilterContext";
+import {
+    useFilterContext,
+    PropertyData,
+    FilterState,
+} from "@/contexts/FilterContext";
 
 function parsePrice(priceString: string): number {
-  return parseInt(priceString.replace(/[P,]/g, ''));
+    return parseInt(priceString.replace(/[P,]/g, ""));
 }
 
 export function PropertiesGrid() {
-
-    const { filters, setFilters, properties, setProperties, loading } = useFilterContext();
+    const { filters, setFilters, properties, setProperties, loading } =
+        useFilterContext();
     const [currentPage, setCurrentPage] = useState(1);
     const propertiesPerPage = 6;
 
     //filter and sort properties
-    const filteredProperties = properties.filter(property => {
+    const filteredProperties = properties.filter((property) => {
         //Feature filters
         if (filters.features.length > 0) {
-            const hasFeature = filters.features.some(feature =>
+            const hasFeature = filters.features.some((feature) =>
                 property.features.includes(feature)
             );
             if (!hasFeature) return false;
         }
 
         //size filters
-        if (filters.minSqFt && property.sqm < parseInt(filters.minSqFt)) return false;
-        if (filters.maxSqFt && property.sqm > parseInt(filters.maxSqFt)) return false;
+        if (filters.minSqFt && property.sqm < parseInt(filters.minSqFt))
+            return false;
+        if (filters.maxSqFt && property.sqm > parseInt(filters.maxSqFt))
+            return false;
 
         //status filters
         if (filters.listingStatus.length > 0) {
             let matchesStatus = false;
-            
-            if (filters.listingStatus.includes('Price Reduced') && property.priceReduced) {
+
+            if (
+                filters.listingStatus.includes("Price Reduced") &&
+                property.priceReduced
+            ) {
                 matchesStatus = true;
             }
-            if (filters.listingStatus.includes('Open House') && property.openHouse) {
+            if (
+                filters.listingStatus.includes("Open House") &&
+                property.openHouse
+            ) {
                 matchesStatus = true;
             }
             if (filters.listingStatus.includes(property.status)) {
                 matchesStatus = true;
             }
-            
+
             if (!matchesStatus) return false;
         }
 
@@ -65,19 +78,22 @@ export function PropertiesGrid() {
     //sort properties
     const sortedProperties = [...filteredProperties].sort((a, b) => {
         switch (filters.sortBy) {
-            case 'price-low':
+            case "price-low":
                 return parsePrice(a.price) - parsePrice(b.price);
-            case 'price-high':
+            case "price-high":
                 return parsePrice(b.price) - parsePrice(a.price);
-            case 'beds':
+            case "beds":
                 return b.beds - a.beds;
-            case 'size':
+            case "size":
                 return b.sqm - a.sqm;
-            case 'featured':
+            case "featured":
                 return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-            case 'newest':
+            case "newest":
             default:
-                return new Date(b.listedOn).getTime() - new Date(a.listedOn).getTime();
+                return (
+                    new Date(b.listedOn).getTime() -
+                    new Date(a.listedOn).getTime()
+                );
         }
     });
 
@@ -95,8 +111,14 @@ export function PropertiesGrid() {
         return (
             <section className="py-24 bg-gradient-to-b from-green-50/30 to-slate-50 relative overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="text-center py-16">
-                        <div className="text-slate-600 text-lg">Loading properties...</div>
+                    <div className="flex flex-col items-center justify-center py-16 space-y-4">
+                        <Loader2 className="h-12 w-12 text-primary animate-spin" />
+                        <div className="text-slate-600 text-lg font-medium">
+                            Loading properties...
+                        </div>
+                        <div className="text-slate-500 text-sm">
+                            Please wait while we fetch the latest listings
+                        </div>
                     </div>
                 </div>
             </section>
@@ -115,24 +137,26 @@ export function PropertiesGrid() {
                 {/* Properties Grid */}
                 {paginatedProperties.length === 0 ? (
                     <div className="text-center py-16">
-                    <div className="text-slate-400 text-lg mb-4">No properties match your filters</div>
-                    <Button
-                        onClick={() => {
-                            const emptyFilters: FilterState = {
-                                features: [],
-                                propertyAge: '',
-                                minSqFt: '',
-                                maxSqFt: '',
-                                listingStatus: [],
-                                sortBy: 'newest'
-                            };
-                            setFilters(emptyFilters);
-                        }}
-                    >
-                        Clear All Filters
-                    </Button>
+                        <div className="text-slate-400 text-lg mb-4">
+                            No properties match your filters
+                        </div>
+                        <Button
+                            onClick={() => {
+                                const emptyFilters: FilterState = {
+                                    features: [],
+                                    propertyAge: "",
+                                    minSqFt: "",
+                                    maxSqFt: "",
+                                    listingStatus: [],
+                                    sortBy: "newest",
+                                };
+                                setFilters(emptyFilters);
+                            }}
+                        >
+                            Clear All Filters
+                        </Button>
                     </div>
-                ): (
+                ) : (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {paginatedProperties.map((property, index) => (
@@ -143,7 +167,8 @@ export function PropertiesGrid() {
                                     <div className="relative overflow-hidden">
                                         <img
                                             src={
-                                                property.images?.[0] || "/placeholder.svg"
+                                                property.images?.[0] ||
+                                                "/placeholder.svg"
                                             }
                                             alt={property.title}
                                             className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700"
@@ -155,7 +180,8 @@ export function PropertiesGrid() {
                                         {/* Status Badge */}
                                         <Badge
                                             className={`absolute top-4 left-4 px-4 py-2 rounded-xl font-semibold ${
-                                                property.status === "New Listing"
+                                                property.status ===
+                                                "New Listing"
                                                     ? "bg-gradient-to-r from-accent to-accent-600 text-white"
                                                     : property.priceReduced
                                                     ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
@@ -205,7 +231,10 @@ export function PropertiesGrid() {
                                                 {property.location}
                                             </span>
                                             <span className="ml-auto text-xs bg-gray-100 px-2 py-1 rounded-lg">
-                                                {property.daysOnMarket} {property.daysOnMarket === 1 ? 'day' : 'days'}
+                                                {property.daysOnMarket}{" "}
+                                                {property.daysOnMarket === 1
+                                                    ? "day"
+                                                    : "days"}
                                             </span>
                                         </div>
 
@@ -266,7 +295,9 @@ export function PropertiesGrid() {
                                             asChild
                                             className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-3 font-semibold group"
                                         >
-                                            <Link href={`/properties/${property.propertyID}`}>
+                                            <Link
+                                                href={`/properties/${property.propertyID}`}
+                                            >
                                                 View Details
                                                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                             </Link>
@@ -277,19 +308,31 @@ export function PropertiesGrid() {
                         </div>
                     </>
                 )}
-                
 
                 {/* Load More / Pagination */}
                 <div className="text-center mt-16">
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                         <div className="text-slate-600">
-                            Showing <span className="font-semibold text-primary">{(currentPage - 1) * propertiesPerPage + 1}</span> to{" "}
-                            <span className="font-semibold text-primary">{Math.min(currentPage * propertiesPerPage, sortedProperties.length)}</span> of{" "}
-                            <span className="font-semibold text-primary">{sortedProperties.length}</span> properties
+                            Showing{" "}
+                            <span className="font-semibold text-primary">
+                                {(currentPage - 1) * propertiesPerPage + 1}
+                            </span>{" "}
+                            to{" "}
+                            <span className="font-semibold text-primary">
+                                {Math.min(
+                                    currentPage * propertiesPerPage,
+                                    sortedProperties.length
+                                )}
+                            </span>{" "}
+                            of{" "}
+                            <span className="font-semibold text-primary">
+                                {sortedProperties.length}
+                            </span>{" "}
+                            properties
                         </div>
                         {currentPage < totalPages && (
                             <Button
-                                onClick={() => setCurrentPage(currentPage +1)}
+                                onClick={() => setCurrentPage(currentPage + 1)}
                                 size="lg"
                                 variant="outline"
                                 className="border-2 border-primary/30 text-slate-700 hover:bg-primary hover:text-white transition-all px-8 py-4 text-lg rounded-2xl font-semibold shadow-lg hover:shadow-xl bg-transparent"
@@ -303,11 +346,18 @@ export function PropertiesGrid() {
                     {/* Pagination */}
                     {totalPages > 1 && (
                         <div className="flex justify-center items-center gap-2 mt-8">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            {Array.from(
+                                { length: totalPages },
+                                (_, i) => i + 1
+                            ).map((page) => (
                                 <Button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    variant={page === currentPage ? "default" : "ghost"}
+                                    variant={
+                                        page === currentPage
+                                            ? "default"
+                                            : "ghost"
+                                    }
                                     size="sm"
                                     className={`w-10 h-10 rounded-xl font-semibold ${
                                         page === currentPage
@@ -317,10 +367,9 @@ export function PropertiesGrid() {
                                 >
                                     {page}
                                 </Button>
-
                             ))}
                         </div>
-                    )}    
+                    )}
                 </div>
             </div>
         </section>
