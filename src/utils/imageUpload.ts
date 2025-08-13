@@ -23,6 +23,33 @@ export async function uploadPropertyImages(
   return result.imagePaths;
 }
 
+export async function updatePropertyImages(
+  propertyID: number,
+  files: File[],
+  existingImages: string[]
+): Promise<string[]> {
+  const formData = new FormData();
+  formData.append('propertyID', propertyID.toString());
+  formData.append('existingImages', JSON.stringify(existingImages));
+  
+  files.forEach(file => {
+    formData.append('files', file);
+  });
+
+  const response = await fetch('/api/admin/property-images', {
+    method: 'PUT',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Upload failed');
+  }
+
+  const result = await response.json();
+  return result.newImagePaths || [];
+}
+
 export async function deletePropertyImages(propertyID: number) {
   const response = await fetch('/api/admin/property-images', {
     method: 'DELETE',

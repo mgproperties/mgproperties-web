@@ -33,25 +33,10 @@ import { PropertyData } from "@/contexts/FilterContext";
 import {
     uploadPropertyImages,
     deletePropertyImages,
+    updatePropertyImages,
 } from "@/utils/imageUpload";
 import { User } from "@supabase/supabase-js";
 
-function calculateDays(timestamp: string): number {
-    const inputDate = new Date(timestamp);
-    const today = new Date();
-    const utcInput = Date.UTC(
-        inputDate.getUTCFullYear(),
-        inputDate.getUTCMonth(),
-        inputDate.getUTCDate()
-    );
-    const utcToday = Date.UTC(
-        today.getUTCFullYear(),
-        today.getUTCMonth(),
-        today.getUTCDate()
-    );
-    const millisecondsPerDay = 1000 * 60 * 60 * 24;
-    return Math.floor((utcToday - utcInput) / millisecondsPerDay) + 1;
-}
 
 interface PropertyManagementProps {
     user: User
@@ -88,6 +73,62 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [agents, setAgents] = useState<Array<{id: string, name: string, email: string}>>([]);
+    const [isCompressing, setIsCompressing] = useState(false);
+
+    const compressImage = (file: File, maxWidth: number = 1600, maxHeight: number = 900, quality: number = 0.85): Promise<File> => {
+        return new Promise((resolve) => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d')!;
+            const img = new Image();
+            
+            img.onload = () => {
+            // Calculate dimensions to fit the carousel's aspect ratio while maintaining quality
+            let { width, height } = img;
+            
+            // Scale down if too large, but maintain aspect ratio
+            if (width > maxWidth || height > maxHeight) {
+                const widthRatio = maxWidth / width;
+                const heightRatio = maxHeight / height;
+                const ratio = Math.min(widthRatio, heightRatio);
+                
+                width *= ratio;
+                height *= ratio;
+            }
+            
+            // Ensure minimum quality for carousel display
+            const minWidth = 800;
+            if (width < minWidth) {
+                const scale = minWidth / width;
+                width = minWidth;
+                height *= scale;
+            }
+            
+            canvas.width = Math.round(width);
+            canvas.height = Math.round(height);
+            
+            // Use better image rendering
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Draw image
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            canvas.toBlob(
+                (blob) => {
+                const compressedFile = new File([blob!], file.name, {
+                    type: 'image/jpeg',
+                    lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+                },
+                'image/jpeg',
+                quality
+            );
+            };
+            
+            img.src = URL.createObjectURL(file);
+        });
+        };
 
     useEffect(() => {
         fetchProperties(userRole, user.id);
@@ -128,29 +169,21 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                 "Enter amount in Pula (e.g., P1,000 or P999). Use commas for thousands, no decimals.";
         }
 
-        const locationRegex = /^[A-Z][a-z0-9]+(?:[ -][A-Z][a-z0-9]+)*$/;
+        const locationRegex = /^[A-Z].*/;
 
         if (!newProperty.location.trim()) {
             newErrors.location = "Location is required";
         } else if (!locationRegex.test(newProperty.location)) {
             newErrors.location =
-                "Capitalize each word (e.g., Old Naledi, Mochudi-West).";
+                "Capitalize the first word";
         }
 
         if (!newProperty.beds === undefined || newProperty.beds === null) {
             newErrors.beds = "Number of beds is required";
-        } else if (
-            !Number.isInteger(newProperty.beds || newProperty.beds < 0)
-        ) {
-            newErrors.beds = "Enter a valid positive integer for beds";
         }
 
         if (!newProperty.baths === undefined || newProperty.baths === null) {
             newErrors.baths = "Number of baths is required";
-        } else if (
-            !Number.isInteger(newProperty.baths || newProperty.baths < 0)
-        ) {
-            newErrors.baths = "Enter a valid positive integer for baths";
         }
 
         if (!newProperty.sqm === undefined || newProperty.sqm === null) {
@@ -173,7 +206,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
             }
         }
 
-        const featureRegex = /^[A-Z][a-z0-9]+(?:[ -][A-Z][a-z0-9]+)*$/;
+        const featureRegex = /^[A-Z].*/;
 
         if (
             Array.isArray(newProperty.features) &&
@@ -184,7 +217,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
             );
             if (invalidFeature) {
                 newErrors.features =
-                    "Capitalize each word in features (e.g., Pool, Garage-1)";
+                    "Capitalize the first word in features (e.g., Pool)";
             }
         }
 
@@ -311,16 +344,26 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
             if (response.ok && result.result[0]?.propertyID) {
                 const propertyID = result.result[0].propertyID;
 
-                if (selectedFiles.length > 0) {
-                    try {
-                        const imagePaths = await uploadPropertyImages(
-                            propertyID,
-                            selectedFiles
-                        );
-                    } catch (imageError) {
-                        console.error("Error uploading images: ", imageError);
+                if (editingProperty){
+                    if (selectedFiles.length > 0 || newProperty.images?.length !== editingProperty.images?.length){
+                        try {
+                            const existingImages = (newProperty.images || []).filter(img => !img.startsWith('blob'));
+                            await updatePropertyImages(propertyID, selectedFiles, existingImages)
+                        } catch (imageError) {
+                            console.error("Error updating images: ", imageError);
+                        }
+                    }
+                } else {
+                    if (selectedFiles.length > 0) {
+                        try {
+                            await uploadPropertyImages(propertyID, selectedFiles)
+                        } catch(imageError){
+                            console.log("Error uploading images: ", imageError);
+                        }
                     }
                 }
+
+                
                 await refetchProperties(userRole, user.id);
 
                 setErrors({});
@@ -861,11 +904,6 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                     )}
                                 </div>
                                 {/* Add new image upload section before description */}
-                                {newProperty.images?.length >= 15 && (
-                                    <p className="text-red-600 text-sm mt-1 col-span-2">
-                                        Maximum 15 images allowed
-                                    </p>
-                                )}
                                 <div className="space-y-2 col-span-2">
                                     <Label htmlFor="images">
                                         Property Images
@@ -874,22 +912,25 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                         <input
                                             type="file"
                                             id="images"
-                                            disabled={
-                                                newProperty.images?.length >= 15
-                                            }
                                             multiple
                                             accept="image/*"
                                             className="hidden"
-                                            onChange={(e) => {
+                                            onChange={async (e) => {
                                                 const files = Array.from(
                                                     e.target.files || []
                                                 );
+                                                setIsCompressing(true);
+
+                                                try {
+                                                    const compressedFiles = await Promise.all(
+                                                    files.map(file => compressImage(file, 1600, 900, 0.90))
+                                                )
                                                 setSelectedFiles([
                                                     ...selectedFiles,
-                                                    ...files,
+                                                    ...compressedFiles,
                                                 ]);
 
-                                                const imageUrls = files.map(
+                                                const imageUrls = compressedFiles.map(
                                                     (file) =>
                                                         URL.createObjectURL(
                                                             file
@@ -903,6 +944,9 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                                         ...imageUrls,
                                                     ],
                                                 });
+                                                } finally {
+                                                    setIsCompressing(false)
+                                                }
                                             }}
                                         />
                                         <label
@@ -925,11 +969,10 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                                 </svg>
                                             </div>
                                             <p className="text-sm text-gray-600">
-                                                Click to upload images or drag
-                                                and drop
+                                                {isCompressing ? "Compressing images..." : "Click to upload images or drag and drop"}
                                             </p>
                                             <p className="text-xs text-gray-500">
-                                                PNG, JPG, GIF up to 10MB each
+                                                PNG, JPG, GIF up to 5MB each
                                             </p>
                                         </label>
                                     </div>
