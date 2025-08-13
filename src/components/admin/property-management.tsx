@@ -37,9 +37,8 @@ import {
 } from "@/utils/imageUpload";
 import { User } from "@supabase/supabase-js";
 
-
 interface PropertyManagementProps {
-    user: User
+    user: User;
     userRole: "admin" | "agent";
 }
 
@@ -59,100 +58,112 @@ interface ValidationErrors {
     features?: string;
 }
 
-export function PropertyManagement({ user, userRole }: PropertyManagementProps) {
+export function PropertyManagement({
+    user,
+    userRole,
+}: PropertyManagementProps) {
     //const [properties, setProperties] = useState<PropertyData[]>([]);
 
     const {
         allProperties: properties,
         loading: propertiesLoading,
         fetchProperties,
-        refetchProperties
+        refetchProperties,
     } = usePropertiesContext();
 
     const [isSaving, setIsSaving] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const [agents, setAgents] = useState<Array<{id: string, name: string, email: string}>>([]);
+    const [agents, setAgents] = useState<
+        Array<{ id: string; name: string; email: string }>
+    >([]);
     const [isCompressing, setIsCompressing] = useState(false);
 
-    const compressImage = (file: File, maxWidth: number = 1600, maxHeight: number = 900, quality: number = 0.85): Promise<File> => {
+    const compressImage = (
+        file: File,
+        maxWidth: number = 1600,
+        maxHeight: number = 900,
+        quality: number = 0.85
+    ): Promise<File> => {
         return new Promise((resolve) => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d')!;
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d")!;
             const img = new Image();
-            
+
             img.onload = () => {
-            // Calculate dimensions to fit the carousel's aspect ratio while maintaining quality
-            let { width, height } = img;
-            
-            // Scale down if too large, but maintain aspect ratio
-            if (width > maxWidth || height > maxHeight) {
-                const widthRatio = maxWidth / width;
-                const heightRatio = maxHeight / height;
-                const ratio = Math.min(widthRatio, heightRatio);
-                
-                width *= ratio;
-                height *= ratio;
-            }
-            
-            // Ensure minimum quality for carousel display
-            const minWidth = 800;
-            if (width < minWidth) {
-                const scale = minWidth / width;
-                width = minWidth;
-                height *= scale;
-            }
-            
-            canvas.width = Math.round(width);
-            canvas.height = Math.round(height);
-            
-            // Use better image rendering
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            
-            // Draw image
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            
-            canvas.toBlob(
-                (blob) => {
-                const compressedFile = new File([blob!], file.name, {
-                    type: 'image/jpeg',
-                    lastModified: Date.now(),
-                });
-                resolve(compressedFile);
-                },
-                'image/jpeg',
-                quality
-            );
+                // Calculate dimensions to fit the carousel's aspect ratio while maintaining quality
+                let { width, height } = img;
+
+                // Scale down if too large, but maintain aspect ratio
+                if (width > maxWidth || height > maxHeight) {
+                    const widthRatio = maxWidth / width;
+                    const heightRatio = maxHeight / height;
+                    const ratio = Math.min(widthRatio, heightRatio);
+
+                    width *= ratio;
+                    height *= ratio;
+                }
+
+                // Ensure minimum quality for carousel display
+                const minWidth = 800;
+                if (width < minWidth) {
+                    const scale = minWidth / width;
+                    width = minWidth;
+                    height *= scale;
+                }
+
+                canvas.width = Math.round(width);
+                canvas.height = Math.round(height);
+
+                // Use better image rendering
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = "high";
+
+                // Draw image
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                canvas.toBlob(
+                    (blob) => {
+                        const compressedFile = new File([blob!], file.name, {
+                            type: "image/jpeg",
+                            lastModified: Date.now(),
+                        });
+                        resolve(compressedFile);
+                    },
+                    "image/jpeg",
+                    quality
+                );
             };
-            
+
             img.src = URL.createObjectURL(file);
         });
-        };
+    };
 
     useEffect(() => {
         fetchProperties(userRole, user.id);
     }, [userRole, user.id, fetchProperties]);
-    
+
     useEffect(() => {
-        if (userRole === 'admin'){
-            fetchAgents()
+        if (userRole === "admin") {
+            fetchAgents();
         }
-    }, [userRole])
+    }, [userRole]);
 
     const fetchAgents = async () => {
         try {
-            const response = await fetch('api/admin/users')
-            const data = await response.json()
+            const response = await fetch("api/admin/users");
+            const data = await response.json();
 
-            if (data && Array.isArray(data.users)){
-                const agentsList = data.users.filter((u: any) => u.role === 'agent')
-                setAgents(agentsList)
+            if (data && Array.isArray(data.users)) {
+                const agentsList = data.users.filter(
+                    (u: any) => u.role === "agent"
+                );
+                setAgents(agentsList);
             }
-        } catch (error){
-            console.error("Error fetching agents: ", error)
+        } catch (error) {
+            console.error("Error fetching agents: ", error);
         }
-    }
+    };
 
     const validateForm = (): ValidationErrors => {
         const newErrors: ValidationErrors = {};
@@ -174,8 +185,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
         if (!newProperty.location.trim()) {
             newErrors.location = "Location is required";
         } else if (!locationRegex.test(newProperty.location)) {
-            newErrors.location =
-                "Capitalize the first word";
+            newErrors.location = "Capitalize the first word";
         }
 
         if (!newProperty.beds === undefined || newProperty.beds === null) {
@@ -324,19 +334,18 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
 
         setIsSaving(true);
         try {
-
             const propertyData = {
                 ...newProperty,
-                agent_id: userRole === 'admin' ? newProperty.agent_id : user.id,
-                propertyID: editingProperty?.propertyID
-            }
+                agent_id: userRole === "admin" ? newProperty.agent_id : user.id,
+                propertyID: editingProperty?.propertyID,
+            };
 
             const response = await fetch("api/admin/properties", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(propertyData)
+                body: JSON.stringify(propertyData),
             });
 
             const result = await response.json();
@@ -344,26 +353,41 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
             if (response.ok && result.result[0]?.propertyID) {
                 const propertyID = result.result[0].propertyID;
 
-                if (editingProperty){
-                    if (selectedFiles.length > 0 || newProperty.images?.length !== editingProperty.images?.length){
+                if (editingProperty) {
+                    if (
+                        selectedFiles.length > 0 ||
+                        newProperty.images?.length !==
+                            editingProperty.images?.length
+                    ) {
                         try {
-                            const existingImages = (newProperty.images || []).filter(img => !img.startsWith('blob'));
-                            await updatePropertyImages(propertyID, selectedFiles, existingImages)
+                            const existingImages = (
+                                newProperty.images || []
+                            ).filter((img) => !img.startsWith("blob"));
+                            await updatePropertyImages(
+                                propertyID,
+                                selectedFiles,
+                                existingImages
+                            );
                         } catch (imageError) {
-                            console.error("Error updating images: ", imageError);
+                            console.error(
+                                "Error updating images: ",
+                                imageError
+                            );
                         }
                     }
                 } else {
                     if (selectedFiles.length > 0) {
                         try {
-                            await uploadPropertyImages(propertyID, selectedFiles)
-                        } catch(imageError){
+                            await uploadPropertyImages(
+                                propertyID,
+                                selectedFiles
+                            );
+                        } catch (imageError) {
                             console.log("Error uploading images: ", imageError);
                         }
                     }
                 }
 
-                
                 await refetchProperties(userRole, user.id);
 
                 setErrors({});
@@ -376,6 +400,16 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
         }
         setIsDialogOpen(false);
     };
+
+    if (loading) {
+        return (
+            <Card className="bg-white rounded-3xl border-0 shadow-lg">
+                <CardContent className="p-8 text-center">
+                    <div>Loading properties...</div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card className="bg-white rounded-3xl border-0 shadow-lg">
@@ -631,9 +665,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                     )}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="featured">
-                                        Featured
-                                    </Label>
+                                    <Label htmlFor="featured">Featured</Label>
                                     <div className="flex items-center space-x-2">
                                         <input
                                             id="featured"
@@ -642,8 +674,7 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                             onChange={(e) =>
                                                 setNewProperty({
                                                     ...newProperty,
-                                                    featured:
-                                                        e.target.checked
+                                                    featured: e.target.checked,
                                                 })
                                             }
                                             className="rounded border-gray-300"
@@ -744,29 +775,34 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                {userRole === 'admin' && <div className="space-y-2">
-                                    <Label htmlFor="agent">Agent</Label>
-                                    <Select
-                                        value={newProperty.agent_id}
-                                        onValueChange={(value) =>
-                                            setNewProperty({
-                                                ...newProperty,
-                                                agent_id: value,
-                                            })
-                                        }
-                                    >
-                                        <SelectTrigger className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
-                                            <SelectValue placeholder="Select agent" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {agents.map((agent) => (
-                                                <SelectItem key={agent.id} value={agent.id}>
-                                                    {agent.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>}
+                                {userRole === "admin" && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="agent">Agent</Label>
+                                        <Select
+                                            value={newProperty.agent_id}
+                                            onValueChange={(value) =>
+                                                setNewProperty({
+                                                    ...newProperty,
+                                                    agent_id: value,
+                                                })
+                                            }
+                                        >
+                                            <SelectTrigger className="rounded-lg border-gray-300 focus:border-primary focus:ring-primary">
+                                                <SelectValue placeholder="Select agent" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {agents.map((agent) => (
+                                                    <SelectItem
+                                                        key={agent.id}
+                                                        value={agent.id}
+                                                    >
+                                                        {agent.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <Label htmlFor="propertyType">
                                         Property Type
@@ -922,30 +958,39 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                                 setIsCompressing(true);
 
                                                 try {
-                                                    const compressedFiles = await Promise.all(
-                                                    files.map(file => compressImage(file, 1600, 900, 0.90))
-                                                )
-                                                setSelectedFiles([
-                                                    ...selectedFiles,
-                                                    ...compressedFiles,
-                                                ]);
+                                                    const compressedFiles =
+                                                        await Promise.all(
+                                                            files.map((file) =>
+                                                                compressImage(
+                                                                    file,
+                                                                    1600,
+                                                                    900,
+                                                                    0.9
+                                                                )
+                                                            )
+                                                        );
+                                                    setSelectedFiles([
+                                                        ...selectedFiles,
+                                                        ...compressedFiles,
+                                                    ]);
 
-                                                const imageUrls = compressedFiles.map(
-                                                    (file) =>
-                                                        URL.createObjectURL(
-                                                            file
-                                                        )
-                                                );
-                                                setNewProperty({
-                                                    ...newProperty,
-                                                    images: [
-                                                        ...(newProperty.images ||
-                                                            []),
-                                                        ...imageUrls,
-                                                    ],
-                                                });
+                                                    const imageUrls =
+                                                        compressedFiles.map(
+                                                            (file) =>
+                                                                URL.createObjectURL(
+                                                                    file
+                                                                )
+                                                        );
+                                                    setNewProperty({
+                                                        ...newProperty,
+                                                        images: [
+                                                            ...(newProperty.images ||
+                                                                []),
+                                                            ...imageUrls,
+                                                        ],
+                                                    });
                                                 } finally {
-                                                    setIsCompressing(false)
+                                                    setIsCompressing(false);
                                                 }
                                             }}
                                         />
@@ -969,7 +1014,9 @@ export function PropertyManagement({ user, userRole }: PropertyManagementProps) 
                                                 </svg>
                                             </div>
                                             <p className="text-sm text-gray-600">
-                                                {isCompressing ? "Compressing images..." : "Click to upload images or drag and drop"}
+                                                {isCompressing
+                                                    ? "Compressing images..."
+                                                    : "Click to upload images or drag and drop"}
                                             </p>
                                             <p className="text-xs text-gray-500">
                                                 PNG, JPG, GIF up to 5MB each

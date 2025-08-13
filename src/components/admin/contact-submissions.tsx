@@ -38,24 +38,28 @@ export function ContactSubmissions() {
     const [selectedSubmission, setSelectedSubmission] =
         useState<ContactSubmission | null>(null);
     const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const fetchSubmissions = async () => {
+        setLoading(true);
         try {
             const result = await adminService.getContactSubmissions();
             setSubmissions(result);
         } catch (error) {
             console.error("Error fetching submissions: ", error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const refreshSubmissions =  async () => {
+    const refreshSubmissions = async () => {
         try {
             const result = await adminService.refreshContactSubmissions();
             setSubmissions(result);
         } catch (error) {
             console.error("Error refreshing submissions: ", error);
         }
-    }
+    };
 
     useEffect(() => {
         fetchSubmissions();
@@ -65,6 +69,16 @@ export function ContactSubmissions() {
         setSelectedSubmission(submission);
         setIsViewDialogOpen(true);
     };
+
+    if (loading) {
+        return (
+            <Card className="bg-white rounded-3xl border-0 shadow-lg">
+                <CardContent className="p-8 text-center">
+                    <div>Loading submissions...</div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <Card className="bg-white rounded-3xl border-0 shadow-lg">

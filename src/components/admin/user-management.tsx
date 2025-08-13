@@ -47,18 +47,17 @@ interface ValidationErrors {
 }
 
 export function UserManagement() {
-
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-    const [ saveStatus, setSaveStatus ] = useState<{
-            type: "success" | "error" | null;
-            message: string;
-        }>({
-            type: null,
-            message: "",    
-        });
+    const [saveStatus, setSaveStatus] = useState<{
+        type: "success" | "error" | null;
+        message: string;
+    }>({
+        type: null,
+        message: "",
+    });
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [newUser, setNewUser] = useState<Omit<User, "id">>({
@@ -72,41 +71,41 @@ export function UserManagement() {
     const validateForm = (): ValidationErrors => {
         const newErrors: ValidationErrors = {};
 
-        if(!newUser.name.trim()) {
+        if (!newUser.name.trim()) {
             newErrors.name = "Name is required";
         }
 
-        if (!newUser.email.trim()){
+        if (!newUser.email.trim()) {
             newErrors.email = "Email is required";
         } else if (!/\S+@\S+\.\S+/.test(newUser.email)) {
             newErrors.email = "Please enter a valid email";
         }
 
-        if (!newUser.role.trim()){
-            newErrors.role = "Role is required"
+        if (!newUser.role.trim()) {
+            newErrors.role = "Role is required";
         }
 
         return newErrors;
-    }
+    };
 
     useEffect(() => {
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
         try {
             const data = await adminService.getUsers();
             setUsers(data.users);
             setCurrentUser(data.currentUser);
         } catch (error) {
-            console.error('Failed to fetch users:', error)
-            setError('Failed to fetch users')
+            console.error("Failed to fetch users:", error);
+            setError("Failed to fetch users");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const refreshUsers = async () => {
         setLoading(true);
@@ -115,13 +114,13 @@ export function UserManagement() {
             const data = await adminService.refreshUsers();
             setUsers(data.users);
             setCurrentUser(data.currentUser);
-        } catch (error){
-            console.error('Failed to refresh users: ', error);
-            setError('Failed to refresh users');
+        } catch (error) {
+            console.error("Failed to refresh users: ", error);
+            setError("Failed to refresh users");
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     const handleCreateUser = () => {
         setEditingUser(null);
@@ -136,32 +135,31 @@ export function UserManagement() {
     };
 
     const handleDeleteUser = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this user?')) {
+        if (!confirm("Are you sure you want to delete this user?")) {
             return;
         }
-        
+
         try {
             const response = await adminService.deleteUser(id);
-            
+
             if (response.ok) {
                 await fetchUsers(); // Refresh the list
             } else {
-                console.error('Failed to delete user');
+                console.error("Failed to delete user");
             }
         } catch (error) {
-            console.error('Failed to delete user:', error);
+            console.error("Failed to delete user:", error);
         }
     };
 
     const handleSaveUser = async () => {
-
         const formErrors = validateForm();
         setErrors(formErrors);
 
-        if (Object.keys(formErrors).length > 0){
+        if (Object.keys(formErrors).length > 0) {
             setSaveStatus({
-                type: 'error',
-                message: 'Please fix the errors before submitting'
+                type: "error",
+                message: "Please fix the errors before submitting",
             });
             return;
         }
@@ -169,37 +167,43 @@ export function UserManagement() {
         setIsSaving(true);
         setSaveStatus({
             type: null,
-            message: ""
+            message: "",
         });
 
         try {
-           let response, result;
+            let response, result;
 
-           if (editingUser) {
-            ({ response, result } = await adminService.updateUser(editingUser.id, newUser))
-           } else{
-            ({ response, result } = await adminService.createUser(newUser))
-           }
+            if (editingUser) {
+                ({ response, result } = await adminService.updateUser(
+                    editingUser.id,
+                    newUser
+                ));
+            } else {
+                ({ response, result } = await adminService.createUser(newUser));
+            }
 
-           if (response.ok) {
-            await fetchUsers();
-            setSaveStatus({
-                type: 'success',
-                message: result.message
-            });
-            setErrors({});
-            setIsDialogOpen(false);
-           } else {
-            setSaveStatus({
-                type: 'error',
-                message: result.error || 'An error occured while saving the user'
-            })
-           }
+            if (response.ok) {
+                await fetchUsers();
+                setSaveStatus({
+                    type: "success",
+                    message: result.message,
+                });
+                setErrors({});
+                setIsDialogOpen(false);
+            } else {
+                setSaveStatus({
+                    type: "error",
+                    message:
+                        result.error ||
+                        "An error occured while saving the user",
+                });
+            }
         } catch (error) {
-            console.error('Failed to save user:', error);
+            console.error("Failed to save user:", error);
             setSaveStatus({
-                type: 'error',
-                message: 'An unexpected error occurred. Please try again later.'
+                type: "error",
+                message:
+                    "An unexpected error occurred. Please try again later.",
             });
         } finally {
             setIsSaving(false);
@@ -232,13 +236,13 @@ export function UserManagement() {
                     >
                         Refresh
                     </Button>
-                <Button
-                    onClick={handleCreateUser}
-                    className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md"
-                >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add User
-                </Button>
+                    <Button
+                        onClick={handleCreateUser}
+                        className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md"
+                    >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add User
+                    </Button>
                 </div>
             </CardHeader>
             <CardContent>
@@ -257,7 +261,10 @@ export function UserManagement() {
                     <TableBody>
                         {users.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                                <TableCell
+                                    colSpan={5}
+                                    className="text-center py-8 text-gray-500"
+                                >
                                     No users found
                                 </TableCell>
                             </TableRow>
@@ -270,12 +277,16 @@ export function UserManagement() {
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>{user.role}</TableCell>
                                     <TableCell>
-                                        <span className={`px-2 py-1 rounded-full text-xs ${
-                                            user.status === 'invited'
-                                                ? 'bg-yellow-100 text-yellow-800'
-                                                : 'bg-green-100 text-green-800'
-                                        }`}>
-                                            {user.status === 'invited' ? 'Pending' : 'Active'}
+                                        <span
+                                            className={`px-2 py-1 rounded-full text-xs ${
+                                                user.status === "invited"
+                                                    ? "bg-yellow-100 text-yellow-800"
+                                                    : "bg-green-100 text-green-800"
+                                            }`}
+                                        >
+                                            {user.status === "invited"
+                                                ? "Pending"
+                                                : "Active"}
                                         </span>
                                     </TableCell>
                                     <TableCell className="text-right">
@@ -287,17 +298,20 @@ export function UserManagement() {
                                         >
                                             <Edit className="h-4 w-4 text-primary" />
                                         </Button>
-                                        {currentUser && user.id !== currentUser.id && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() =>
-                                                    handleDeleteUser(user.id)
-                                                }
-                                            >
-                                            <Trash2 className="h-4 w-4 text-red-500" />
-                                        </Button>
-                                    )}
+                                        {currentUser &&
+                                            user.id !== currentUser.id && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() =>
+                                                        handleDeleteUser(
+                                                            user.id
+                                                        )
+                                                    }
+                                                >
+                                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                                </Button>
+                                            )}
                                     </TableCell>
                                 </TableRow>
                             ))
@@ -327,10 +341,16 @@ export function UserManagement() {
                                         })
                                     }
                                     className={`col-span-3 rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
-                                        errors.name ? 'border-red-300 bg-red-50' : 'boder-gray-200'
+                                        errors.name
+                                            ? "border-red-300 bg-red-50"
+                                            : "boder-gray-200"
                                     }`}
                                 />
-                                {errors.name && <p className="col-start-2 col-span-3 text-red-600 text-sm mt-1">{errors.name}</p>}
+                                {errors.name && (
+                                    <p className="col-start-2 col-span-3 text-red-600 text-sm mt-1">
+                                        {errors.name}
+                                    </p>
+                                )}
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="email" className="text-right">
@@ -346,10 +366,16 @@ export function UserManagement() {
                                         })
                                     }
                                     className={`col-span-3 rounded-lg border-gray-300 focus:border-primary focus:ring-primary ${
-                                        errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                        errors.email
+                                            ? "border-red-300 bg-red-50"
+                                            : "border-gray-200"
                                     }`}
                                 />
-                                {errors.email && <p className="col-start-2 col-span-3 text-red-600 text-sm mt-1">{errors.email}</p>}
+                                {errors.email && (
+                                    <p className="col-start-2 col-span-3 text-red-600 text-sm mt-1">
+                                        {errors.email}
+                                    </p>
+                                )}
                             </div>
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="role" className="text-right">
@@ -357,9 +383,7 @@ export function UserManagement() {
                                 </Label>
                                 <Select
                                     value={newUser.role}
-                                    onValueChange={(
-                                        value: "admin" | "agent"
-                                    ) =>
+                                    onValueChange={(value: "admin" | "agent") =>
                                         setNewUser({ ...newUser, role: value })
                                     }
                                 >
@@ -375,15 +399,19 @@ export function UserManagement() {
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {errors.role && <p className="col-start-2 col-span-3 text-red-600 text-sm mt-1">{errors.role}</p>}
+                                {errors.role && (
+                                    <p className="col-start-2 col-span-3 text-red-600 text-sm mt-1">
+                                        {errors.role}
+                                    </p>
+                                )}
                             </div>
                         </div>
                         <DialogFooter>
                             <Button
                                 variant="outline"
                                 onClick={() => {
-                                    setIsDialogOpen(false)
-                                    setErrors({})
+                                    setIsDialogOpen(false);
+                                    setErrors({});
                                 }}
                                 className="rounded-xl"
                             >
@@ -396,7 +424,7 @@ export function UserManagement() {
                                 className="bg-gradient-to-r from-primary to-primary-600 text-white rounded-xl shadow-md disabled:opacity-50"
                             >
                                 <Save className="mr-2 h-4 w-4" />
-                                {isSaving ? 'Saving...' : 'Save Changes' }
+                                {isSaving ? "Saving..." : "Save Changes"}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

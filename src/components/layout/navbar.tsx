@@ -2,11 +2,18 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Home } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
-export function Navbar() {
+import { User } from "@supabase/supabase-js";
+
+interface NavbarProps {
+    handleLogout?: () => void;
+    user?: User;
+}
+
+export function Navbar({ handleLogout, user }: NavbarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -71,6 +78,16 @@ export function Navbar() {
                         <Button className="bg-gradient-to-r from-accent to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl font-semibold">
                             Get Started
                         </Button>
+                        {user && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={handleLogout}
+                                className="rounded-xl hover:bg-primary text-black hover:text-white shadow-lg hover:shadow-xl transition-all"
+                            >
+                                <LogOut className="h-6 w-6" />
+                            </Button>
+                        )}
                     </div>
 
                     {/* Mobile menu button */}
@@ -104,9 +121,17 @@ export function Navbar() {
                                     {item.name}
                                 </Link>
                             ))}
-                            <div className="px-3 py-2">
+                            <div className="px-3 py-2 space-y-3">
                                 <Button className="w-full bg-gradient-to-r from-accent to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white rounded-2xl font-semibold">
                                     Get Started
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={handleLogout}
+                                    className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-2xl font-semibold"
+                                >
+                                    Logout
                                 </Button>
                             </div>
                         </div>
