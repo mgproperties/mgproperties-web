@@ -11,10 +11,34 @@ import {
     Map,
     ChevronDown,
 } from "lucide-react";
+import { useFilterContext } from "@/contexts/FilterContext";
 
 export function PropertiesHero() {
     const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
     const [searchQuery, setSearchQuery] = useState("");
+    const { filters, setFilters } = useFilterContext();
+
+    // Local state for form inputs
+    const [searchInputs, setSearchInputs] = useState({
+        location: filters.location,
+        propertyType: filters.propertyType,
+        priceRange: filters.priceRange,
+        bedrooms: filters.bedrooms,
+    });
+
+    const handleInputChange = (field: string, value: string) => {
+        setSearchInputs((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const handleSearch = () => {
+        setFilters({
+            ...filters,
+            ...searchInputs,
+        });
+    };
 
     return (
         <section className="relative py-32 bg-gradient-to-br from-secondary via-secondary to-secondary/90 overflow-hidden">
@@ -70,9 +94,12 @@ export function PropertiesHero() {
                                 <input
                                     type="text"
                                     placeholder="City, neighborhood, or ZIP code"
-                                    value={searchQuery}
+                                    value={searchInputs.location}
                                     onChange={(e) =>
-                                        setSearchQuery(e.target.value)
+                                        handleInputChange(
+                                            "location",
+                                            e.target.value
+                                        )
                                     }
                                     className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md"
                                 />
@@ -84,14 +111,25 @@ export function PropertiesHero() {
                             <label className="block text-sm font-semibold text-slate-700 mb-2">
                                 Property Type
                             </label>
-                            <select className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer">
+                            <select
+                                value={searchInputs.propertyType}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        "propertyType",
+                                        e.target.value
+                                    )
+                                }
+                                className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
+                            >
                                 <option value="">All Types</option>
-                                <option value="house">Residential</option>
-                                <option value="condo">Commercial</option>
-                                <option value="townhouse">
+                                <option value="Residential">Residential</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Multi-residential">
                                     Multi-residential
                                 </option>
-                                <option value="villa">Agricultural</option>
+                                <option value="Agricultural">
+                                    Agricultural
+                                </option>
                             </select>
                             <ChevronDown className="absolute right-4 top-1/2 transform translate-y-1 text-gray-500 h-5 w-5 pointer-events-none" />
                         </div>
@@ -101,14 +139,23 @@ export function PropertiesHero() {
                             <label className="block text-sm font-semibold text-slate-700 mb-2">
                                 Price Range
                             </label>
-                            <select className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer">
+                            <select
+                                value={searchInputs.priceRange}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        "priceRange",
+                                        e.target.value
+                                    )
+                                }
+                                className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
+                            >
                                 <option value="">Any Price</option>
                                 <option value="0-500000">Under P500K</option>
                                 <option value="500000-750000">
                                     P500K - P750K
                                 </option>
                                 <option value="750000-1000000">
-                                    P750K -P1M
+                                    P750K - P1M
                                 </option>
                                 <option value="1000000-2000000">
                                     P1M - P2M
@@ -123,7 +170,16 @@ export function PropertiesHero() {
                             <label className="block text-sm font-semibold text-slate-700 mb-2">
                                 Bedrooms
                             </label>
-                            <select className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer">
+                            <select
+                                value={searchInputs.bedrooms}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        "bedrooms",
+                                        e.target.value
+                                    )
+                                }
+                                className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
+                            >
                                 <option value="">Any</option>
                                 <option value="1">1+</option>
                                 <option value="2">2+</option>
@@ -138,16 +194,10 @@ export function PropertiesHero() {
                         <div className="lg:col-span-2 flex gap-2">
                             <Button
                                 size="lg"
+                                onClick={handleSearch}
                                 className="flex-1 bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-4 font-semibold group"
                             >
                                 <Search className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="px-4 py-4 border-2 border-gray-200 hover:border-primary hover:bg-primary/5 rounded-2xl transition-all"
-                            >
-                                <SlidersHorizontal className="h-5 w-5 text-primary" />
                             </Button>
                         </div>
                     </div>

@@ -35,6 +35,53 @@ export function PropertiesGrid() {
 
     //filter and sort properties
     const filteredProperties = properties.filter((property) => {
+        // Location search
+        if (
+            filters.location &&
+            !property.location
+                .toLowerCase()
+                .includes(filters.location.toLowerCase())
+        ) {
+            return false;
+        }
+
+        // Property type filter
+        if (
+            filters.propertyType &&
+            property.propertyType !== filters.propertyType
+        ) {
+            return false;
+        }
+
+        // Price range filter
+        if (filters.priceRange) {
+            const price = parsePrice(property.price);
+            if (filters.priceRange === "0-500000" && price > 500000)
+                return false;
+            if (
+                filters.priceRange === "500000-750000" &&
+                (price < 500000 || price > 750000)
+            )
+                return false;
+            if (
+                filters.priceRange === "750000-1000000" &&
+                (price < 750000 || price > 1000000)
+            )
+                return false;
+            if (
+                filters.priceRange === "1000000-2000000" &&
+                (price < 1000000 || price > 2000000)
+            )
+                return false;
+            if (filters.priceRange === "2000000+" && price < 2000000)
+                return false;
+        }
+
+        // Bedrooms filter
+        if (filters.bedrooms && property.beds < parseInt(filters.bedrooms)) {
+            return false;
+        }
+
         //Feature filters
         if (filters.features.length > 0) {
             const hasFeature = filters.features.some((feature) =>

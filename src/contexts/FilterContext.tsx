@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from "react";
 
 export interface PropertyData {
     propertyID: number;
@@ -28,7 +28,7 @@ export interface PropertyData {
         image: string;
         role: string;
     } | null;
-    agent_id: string
+    agent_id: string;
 }
 
 export interface FilterState {
@@ -38,6 +38,11 @@ export interface FilterState {
     maxSqFt: string;
     listingStatus: string[];
     sortBy: string;
+    // for search
+    location: string;
+    propertyType: string;
+    priceRange: string;
+    bedrooms: string;
 }
 
 interface FilterContextType {
@@ -48,12 +53,16 @@ interface FilterContextType {
     loading?: boolean;
 }
 
-export const FilterContext = createContext<FilterContextType | undefined>(undefined);
+export const FilterContext = createContext<FilterContextType | undefined>(
+    undefined
+);
 
 export const useFilterContext = () => {
     const context = useContext(FilterContext);
     if (!context) {
-        throw new Error('useFilterContext must be used within a FilterProvider');
+        throw new Error(
+            "useFilterContext must be used within a FilterProvider"
+        );
     }
     return context;
 };
