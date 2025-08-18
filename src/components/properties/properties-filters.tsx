@@ -12,18 +12,23 @@ export function PropertiesFilters() {
     const [showFilters, setShowFilters] = useState(false);
     const [tempFilters, setTempFilters] = useState<FilterState>(filters);
 
-    //active filter labels
+    // Add useEffect to sync tempFilters with filters when filters change
+    useEffect(() => {
+        setTempFilters(filters);
+    }, [filters]);
+
+    //active filter labels - use filters instead of tempFilters
     const getActiveFilters = () => {
         const active: string[] = [];
 
-        // Add search filters
-        if (tempFilters.location) {
-            active.push(`Location: ${tempFilters.location}`);
+        // Add search filters - use filters instead of tempFilters
+        if (filters.location) {
+            active.push(`Location: ${filters.location}`);
         }
-        if (tempFilters.propertyType) {
-            active.push(`Type: ${tempFilters.propertyType}`);
+        if (filters.propertyType) {
+            active.push(`Type: ${filters.propertyType}`);
         }
-        if (tempFilters.priceRange) {
+        if (filters.priceRange) {
             const priceLabels: { [key: string]: string } = {
                 "0-500000": "Under P500K",
                 "500000-750000": "P500K - P750K",
@@ -33,30 +38,29 @@ export function PropertiesFilters() {
             };
             active.push(
                 `Price: ${
-                    priceLabels[tempFilters.priceRange] ||
-                    tempFilters.priceRange
+                    priceLabels[filters.priceRange] || filters.priceRange
                 }`
             );
         }
-        if (tempFilters.bedrooms) {
-            active.push(`${tempFilters.bedrooms}+ beds`);
+        if (filters.bedrooms) {
+            active.push(`${filters.bedrooms}+ beds`);
         }
 
-        // Existing filters
-        if (tempFilters.features.length > 0) {
-            active.push(...tempFilters.features);
+        // Existing filters - use filters instead of tempFilters
+        if (filters.features.length > 0) {
+            active.push(...filters.features);
         }
-        if (tempFilters.propertyAge) {
-            active.push(`Age: ${tempFilters.propertyAge}`);
+        if (filters.propertyAge) {
+            active.push(`Age: ${filters.propertyAge}`);
         }
-        if (tempFilters.minSqFt) {
-            active.push(`Min: ${tempFilters.minSqFt} sqm`);
+        if (filters.minSqFt) {
+            active.push(`Min: ${filters.minSqFt} sqm`);
         }
-        if (tempFilters.maxSqFt) {
-            active.push(`Max: ${tempFilters.maxSqFt} sqm`);
+        if (filters.maxSqFt) {
+            active.push(`Max: ${filters.maxSqFt} sqm`);
         }
-        if (tempFilters.listingStatus.length > 0) {
-            active.push(...tempFilters.listingStatus);
+        if (filters.listingStatus.length > 0) {
+            active.push(...filters.listingStatus);
         }
 
         return active;
@@ -65,7 +69,7 @@ export function PropertiesFilters() {
     const activeFilters = getActiveFilters();
 
     const removeFilter = (filter: string) => {
-        const newFilters = { ...tempFilters };
+        const newFilters = { ...filters }; // Use filters instead of tempFilters
 
         // Handle search filters
         if (filter.startsWith("Location:")) newFilters.location = "";
@@ -98,7 +102,7 @@ export function PropertiesFilters() {
             minSqFt: "",
             maxSqFt: "",
             listingStatus: [],
-            sortBy: tempFilters.sortBy,
+            sortBy: filters.sortBy, // Keep current sort
         };
         setTempFilters(emptyFilters);
         setFilters(emptyFilters);
