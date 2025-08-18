@@ -181,6 +181,18 @@ export function PropertiesGrid() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                {/* Add Property Count Display */}
+                <div className="mb-8">
+                    <div className="text-slate-700 font-semibold text-lg">
+                        <span className="text-2xl text-primary">
+                            {filteredProperties.length}
+                        </span>{" "}
+                        {filteredProperties.length === 1
+                            ? "property"
+                            : "properties"}{" "}
+                        found
+                    </div>
+                </div>
                 {/* Properties Grid */}
                 {paginatedProperties.length === 0 ? (
                     <div className="text-center py-16">

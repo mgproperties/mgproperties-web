@@ -134,16 +134,6 @@ export function PropertiesFilters() {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                     {/* Results Count & Active Filters */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                        <div className="text-slate-700 font-semibold">
-                            <span className="text-2xl text-primary">
-                                {properties.length}
-                            </span>{" "}
-                            {properties.length === 1
-                                ? "property"
-                                : "properties"}{" "}
-                            found
-                        </div>
-
                         {/* Active Filters */}
                         {activeFilters.length > 0 && (
                             <div className="flex flex-wrap gap-2">
