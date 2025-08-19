@@ -401,7 +401,7 @@ export function PropertyManagement({
         setIsDialogOpen(false);
     };
 
-    if (loading) {
+    /* if (loading) {
         return (
             <Card className="bg-white rounded-3xl border-0 shadow-lg">
                 <CardContent className="p-8 text-center">
@@ -409,7 +409,7 @@ export function PropertyManagement({
                 </CardContent>
             </Card>
         );
-    }
+    } */
 
     return (
         <Card className="bg-white rounded-3xl border-0 shadow-lg">
