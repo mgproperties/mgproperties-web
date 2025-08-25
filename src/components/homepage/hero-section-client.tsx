@@ -104,22 +104,6 @@ export default function HeroSectionClient() {
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20">
                 <div className="text-center max-w-6xl mx-auto">
-                    {/* Trust Indicators - Floating */}
-                    <div className="flex justify-center gap-6 mb-8 opacity-0 animate-fade-in delay-300">
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                            <Star className="w-4 h-4 text-accent fill-accent" />
-                            <span className="text-sm font-medium text-white">
-                                4.9/5 Rating
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-                            <Award className="w-4 h-4 text-accent" />
-                            <span className="text-sm font-medium text-white">
-                                Award Winning
-                            </span>
-                        </div>
-                    </div>
-
                     {/* Premium Badge */}
                     <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-accent to-accent-600 rounded-full text-white font-semibold mb-8 animate-fade-in hover:scale-105 transition-transform cursor-pointer shadow-lg">
                         <div className="w-2 h-2 bg-white rounded-full mr-3 animate-pulse" />
