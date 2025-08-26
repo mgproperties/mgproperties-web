@@ -57,11 +57,11 @@ class PropertiesService {
     // Check cache first
     const cached = propertiesCache.get<PropertyData[]>('properties', userRole, userId);
     if (cached) {
-      console.log('Returning cached properties');
+      //console.log('Returning cached properties');
       return cached;
     }
 
-    console.log('Fetching properties from API');
+    //console.log('Fetching properties from API');
     
     // Determine endpoint based on user role
     const endpoint = userRole === 'admin' || !userRole
