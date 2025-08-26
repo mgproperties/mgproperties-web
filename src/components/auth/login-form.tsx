@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
@@ -17,6 +19,7 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+  const searchParams = useSearchParams()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -60,6 +63,11 @@ export function LoginForm() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+            {searchParams?.get('message') === 'password-updated' && (
+              <Alert>
+                <AlertDescription>Your password has been updated successfully!</AlertDescription>
+              </Alert>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -101,6 +109,9 @@ export function LoginForm() {
                 'Sign In'
               )}
             </Button>
+              <Link href="/auth/forgot-password" className="block text-center text-sm text-muted-foreground">
+                Forgot password?
+              </Link>
           </form>
         </CardContent>
       </Card>
