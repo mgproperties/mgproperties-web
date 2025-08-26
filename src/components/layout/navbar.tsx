@@ -29,7 +29,7 @@ export function Navbar({ handleLogout, user }: NavbarProps) {
         { name: "Properties", href: "/properties" },
         { name: "About", href: "/about" },
         { name: "Services", href: "/services" },
-        { name: "Testimonials", href: "/testimonials" },
+        // { name: "Testimonials", href: "/testimonials" },
         { name: "Contact", href: "/contact" },
     ];
 
@@ -75,9 +75,11 @@ export function Navbar({ handleLogout, user }: NavbarProps) {
                                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all group-hover:w-full"></span>
                             </Link>
                         ))}
-                        <Button className="bg-gradient-to-r from-accent to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl font-semibold">
-                            Get Started
-                        </Button>
+                        <Link href="/properties">
+                            <Button className="bg-gradient-to-r from-accent to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl font-semibold">
+                                Get Started
+                            </Button>
+                        </Link>
                         {user && (
                             <Button
                                 variant="ghost"
@@ -122,9 +124,11 @@ export function Navbar({ handleLogout, user }: NavbarProps) {
                                 </Link>
                             ))}
                             <div className="px-3 py-2 space-y-3">
-                                <Button className="w-full bg-gradient-to-r from-accent to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white rounded-2xl font-semibold">
-                                    Get Started
-                                </Button>
+                                <Link href="/properties">
+                                    <Button className="w-full bg-gradient-to-r from-accent to-accent-600 hover:from-accent-600 hover:to-accent-700 text-white rounded-2xl font-semibold">
+                                        Get Started
+                                    </Button>
+                                </Link>
                                 <Button
                                     variant="ghost"
                                     size="icon"

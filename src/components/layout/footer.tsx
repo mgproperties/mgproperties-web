@@ -92,7 +92,7 @@ export function Footer() {
                                 { name: "Properties", href: "/properties" },
                                 { name: "About Us", href: "/about" },
                                 { name: "Services", href: "/services" },
-                                { name: "Testimonials", href: "/testimonials" },
+                                // { name: "Testimonials", href: "/testimonials" },
                                 { name: "Contact", href: "/contact" },
                             ].map((item) => (
                                 <li key={item.name} className="list-none">
