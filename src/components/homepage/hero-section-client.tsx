@@ -55,7 +55,7 @@ export default function HeroSectionClient() {
                         <div className="mt-8 text-xl md:text-2xl text-white/90 font-medium">
                             with our{" "}
                             <span className="text-accent font-bold animate-pulse">
-                                With our Expert Guidance
+                                Expert Guidance
                             </span>
                         </div>
                     </div>
