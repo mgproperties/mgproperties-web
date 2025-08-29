@@ -204,7 +204,7 @@ export function PropertiesHero() {
                 </div>
 
                 {/* View Toggle */}
-                <div className="flex justify-center mt-8">
+                {/* <div className="flex justify-center mt-8">
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/20">
                         <div className="flex gap-2">
                             <Button
@@ -239,7 +239,7 @@ export function PropertiesHero() {
                             </Button>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </section>
     );
