@@ -47,7 +47,7 @@ export function ContactHero() {
                         </p>
 
                         <p className="text-lg text-white/80 leading-relaxed max-w-3xl mx-auto">
-                            Whether you're buying, selling, or investing, we're
+                            Whether you're buying, selling, investing, or needing a valuation, we're
                             committed to making your real estate experience
                             seamless and successful.
                         </p>

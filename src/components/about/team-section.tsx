@@ -8,16 +8,18 @@ const teamMembers = [
         name: "Mpho Moremong-Gobe",
         role: "Founder & CEO",
         image: "/placeholder.svg?height=400&width=400",
-        bio: "With 20+ years in real estate, Mpho leads our team with vision and expertise. Her passion for helping families find their perfect homes drives everything we do at MG Properties.",
+        bio: "With over 28 years of experience in real estate, Mpho leads our team with vision and expertise. Her work spans property valuations, management, sales, and advisory services, ensuring that clients receive reliable guidance and practical solutions. At MG Properties, Mpho is committed to helping individuals, families, and investors make confident property decisions.",
         email: "mgobe@mgproperties.co.bw",
         // phone: "(555) 123-4567",
         specialties: [
+            "Valuations",
             "Luxury Homes",
             "Investment Properties",
             "Market Analysis",
-            "Team Leadership",
+            "Team Leadership"
         ],
         achievements: [
+            "First citizen Chartered Surveyor, Botswana",
             "Founded MG Properties in 2009",
             "500+ successful transactions",
             "Top 1% of agents nationally",

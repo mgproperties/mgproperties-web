@@ -1,41 +1,41 @@
 import { Card, CardContent } from "@/components/ui/card";
 import {
     Home,
-    Search,
-    FileText,
+    Calculator,
+    Handshake,
     Key,
     TrendingUp,
-    Users,
+    Building,
     ArrowRight,
 } from "lucide-react";
 
 const services = [
     {
-        icon: Search,
+        icon: Calculator,
         title: "Property Valuations",
         description:
             "Get a comprehensive valuation report for your property, including market analysis and pricing strategies.",
         color: "from-primary to-primary-600",
     },
     {
-        icon: Home,
+        icon: Handshake,
         title: "Sales",
         description:
             "Expert guidance through the entire sales process, from listing to closing, ensuring maximum value for your property.",
         color: "from-accent to-accent-600",
     },
     {
-        icon: FileText,
+        icon: Key,
         title: "Lettings/Rentals",
         description:
-            "Comprehensive support for landlords and tenants, including property marketing, tenant screening, and lease management.",
+            "Comprehensive support for landlords and tenants, including property marketing, and tenant screening.",
         color: "from-secondary to-secondary-600",
     },
     {
-        icon: Key,
+        icon: Building,
         title: "Property Management",
         description:
-            "Full-service property management for landlords and real estate investors seeking passive income.",
+            "Full-service property and lease management for landlords and real estate investors seeking passive income.",
         color: "from-primary to-accent",
     },
     {
@@ -101,12 +101,11 @@ export function Services() {
                                 <p className="text-slate-600 mb-6 leading-relaxed">
                                     {service.description}
                                 </p>
-
-                                {/* Learn more link */}
+                                {/* 
                                 <div className="flex items-center text-primary font-semibold group-hover:gap-2 transition-all cursor-pointer">
                                     <span>Learn more</span>
                                     <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                                </div>
+                                </div> */}
                             </CardContent>
                         </Card>
                     ))}

@@ -123,13 +123,16 @@ export function PropertiesHero() {
                             >
                                 <option value="">All Types</option>
                                 <option value="Residential">Residential</option>
-                                <option value="Commercial">Commercial</option>
                                 <option value="Multi-residential">
                                     Multi-residential
                                 </option>
                                 <option value="Agricultural">
                                     Agricultural
                                 </option>
+                                <option value="Offices">Offices</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Industrial">Industrial</option>
+                                <option value="Commercial">Commercial</option>
                             </select>
                             <ChevronDown className="absolute right-4 top-1/2 transform translate-y-1 text-gray-500 h-5 w-5 pointer-events-none" />
                         </div>

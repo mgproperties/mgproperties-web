@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Home, Heart, Target, Lightbulb, Box } from "lucide-react";
+import { Home, Heart, Target, Lightbulb, Box, Shield, Eye, Award, HandHeart, Users } from "lucide-react";
 
 export function AboutStory() {
     return (
@@ -127,35 +127,35 @@ export function AboutStory() {
                         <div className="space-y-6">
                             {[
                                 {
-                                    icon: Home,
+                                    icon: Shield,
                                     title: "Integrity",
                                     description:
                                         "We build lasting relationships through honest communication and transparent business practices.",
                                     gradient: "from-accent/10 to-primary/10",
                                 },
                                 {
-                                    icon: Lightbulb,
+                                    icon: Eye,
                                     title: "Honesty/Transparency",
                                     description:
                                         "We believe in open communication and transparency in all our dealings, ensuring trust and clarity.",
                                     gradient: "from-primary/10 to-secondary/10",
                                 },
                                 {
-                                    icon: Heart,
+                                    icon: Award,
                                     title: "Professionalism",
                                     description:
                                         "We uphold the highest standards of professionalism, ensuring our clients receive expert advice and exceptional service.",
                                     gradient: "from-primary/10 to-accent/10",
                                 },
                                 {
-                                    icon: Heart,
+                                    icon: HandHeart,
                                     title: "Humility/Setho",
                                     description:
                                         "We approach every client with humility, understanding their unique needs and treating them with respect.",
                                     gradient: "from-primary/10 to-accent/10",
                                 },
                                 {
-                                    icon: Heart,
+                                    icon: Users,
                                     title: "Customer Focus",
                                     description:
                                         "Every decision we make is guided by what's best for our clients, not what's easiest for us.",

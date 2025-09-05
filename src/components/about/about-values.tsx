@@ -106,7 +106,7 @@ export function AboutValues() {
                         <div className="absolute bottom-10 left-10 w-40 h-40 bg-gradient-to-tr from-accent/8 to-primary/5 rounded-full blur-3xl" />
                     </div>
 
-                    <CardContent className="p-12 text-center relative z-10">
+                    {/* <CardContent className="p-12 text-center relative z-10">
                         <h3 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
                             Ready to Start Your
                             <span className="block bg-gradient-to-r from-accent via-accent-600 to-accent-700 bg-clip-text text-transparent">
@@ -134,7 +134,7 @@ export function AboutValues() {
                                 Schedule Consultation
                             </Button>
                         </div>
-                    </CardContent>
+                    </CardContent> */}
                 </Card>
             </div>
         </section>

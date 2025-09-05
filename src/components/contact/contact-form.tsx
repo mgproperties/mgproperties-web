@@ -28,10 +28,10 @@ export function ContactForm() {
         name: "",
         email: "",
         phone: "",
-        subject: "General Inquiry",
+        subject: "",
         message: "",
-        propertyType: "House",
-        budget: "P500K - P750K",
+        propertyType: "",
+        budget: "",
     });
 
     const [ isSubmitting, setIsSubmitting ] = useState(false);
@@ -116,10 +116,10 @@ export function ContactForm() {
                     name: "",
                     email: "",
                     phone: "",
-                    subject: "General Inquiry",
+                    subject: "",
                     message: "",
-                    propertyType: "House",
-                    budget: "P500K - P750K",
+                    propertyType: "",
+                    budget: "",
                 });
                 setErrors({});
             } else {
@@ -255,6 +255,9 @@ export function ContactForm() {
                                                 onChange={handleChange}
                                                 className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
                                             >
+                                                <option value="" disabled>
+                                                    Select subject
+                                                </option>
                                                 <option value="General Inquiry">
                                                     General Inquiry
                                                 </option>
@@ -270,8 +273,8 @@ export function ContactForm() {
                                                 <option value="Property Valuation">
                                                     Property Valuation
                                                 </option>
-                                                <option value="Investment Consulting">
-                                                    Investment Consulting
+                                                <option value="Property Management">
+                                                    Property Management
                                                 </option>
                                             </select>
                                         </div>
@@ -287,17 +290,29 @@ export function ContactForm() {
                                                 onChange={handleChange}
                                                 className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
                                             >
+                                                <option value="" disabled>
+                                                    Select property type
+                                                </option>
                                                 <option value="Residential">
                                                     Residential
-                                                </option>
-                                                <option value="Commercial">
-                                                    Commercial
                                                 </option>
                                                 <option value="Agricultural">
                                                     Agricultural
                                                 </option>
                                                 <option value="Multi-residential">
                                                     Mutli-residential
+                                                </option>
+                                                <option value="Offices">
+                                                    Offices
+                                                </option>
+                                                <option value="Retail">
+                                                    Retail
+                                                </option>
+                                                <option value="Industrial">
+                                                    Industrial
+                                                </option>
+                                                <option value="Commercial">
+                                                    Commercial
                                                 </option>
                                             </select>
                                         </div>
@@ -309,6 +324,9 @@ export function ContactForm() {
                                                 onChange={handleChange}
                                                 className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg hover:shadow-md appearance-none cursor-pointer"
                                             >
+                                                <option value="" disabled>
+                                                    Select budget
+                                                </option>
                                                 <option value="Under P500K">
                                                     Under P500K
                                                 </option>

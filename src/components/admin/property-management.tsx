@@ -823,14 +823,23 @@ export function PropertyManagement({
                                             <SelectItem value="Residential">
                                                 Residential
                                             </SelectItem>
-                                            <SelectItem value="Commercial">
-                                                Commercial
-                                            </SelectItem>
                                             <SelectItem value="Agricultural">
                                                 Agricultural
                                             </SelectItem>
                                             <SelectItem value="Multi-residential">
                                                 Multi-residential
+                                            </SelectItem>
+                                            <SelectItem value="Offices">
+                                                Offices
+                                            </SelectItem>
+                                            <SelectItem value="Retail">
+                                                Retail
+                                            </SelectItem>
+                                            <SelectItem value="Industrial">
+                                                Industrial
+                                            </SelectItem>
+                                            <SelectItem value="Commercial">
+                                                Commercial
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
