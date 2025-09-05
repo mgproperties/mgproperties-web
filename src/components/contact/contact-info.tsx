@@ -12,6 +12,7 @@ import {
     Instagram,
     Linkedin,
 } from "lucide-react";
+import { PiTiktokLogo } from "react-icons/pi";
 
 export function ContactInfo() {
     const [activeOffice, setActiveOffice] = useState("gaborone");
@@ -139,13 +140,17 @@ export function ContactInfo() {
                                         Icon: Twitter,
                                         url: "https://x.com/mgproperties_bw",
                                     },
-                                    {
-                                        Icon: Instagram,
-                                        url: "https://www.instagram.com/mgproperties",
-                                    },
+                                    // {
+                                    //     Icon: Instagram,
+                                    //     url: "https://www.instagram.com/mgproperties",
+                                    // },
                                     {
                                         Icon: Linkedin,
                                         url: "https://bw.linkedin.com/company/mgproperties",
+                                    },
+                                    {
+                                        Icon: PiTiktokLogo,
+                                        url: "https://www.tiktok.com/@mg_propertiesbw",
                                     },
                                 ].map(({ Icon, url }, index) => (
                                     <a
