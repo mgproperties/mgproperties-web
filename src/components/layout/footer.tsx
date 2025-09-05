@@ -37,13 +37,13 @@ export function Footer() {
                             <Image
                                 src="/logo.png"
                                 alt="MG Properties Logo"
-                                width={80}
-                                height={80}
+                                width={125}
+                                height={125}
                                 className="rounded-lg"
                             />
-                            <span className="font-bold text-2xl text-primary bg-clip-text">
+                            {/* <span className="font-bold text-2xl text-primary bg-clip-text">
                                 MG Properties
-                            </span>
+                            </span> */}
                         </Link>
                         <p className="text-white/70 leading-relaxed">
                             Your trusted partner in finding the perfect home.

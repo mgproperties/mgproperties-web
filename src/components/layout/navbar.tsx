@@ -42,7 +42,7 @@ export function Navbar({ handleLogout, user }: NavbarProps) {
             }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-20">
+                <div className="flex justify-between h-35">
                     <div className="flex items-center">
                         <Link
                             href="/"
@@ -54,8 +54,8 @@ export function Navbar({ handleLogout, user }: NavbarProps) {
                             <Image
                                 src="/mg-logo.png"
                                 alt="MG Properties Logo"
-                                width={80}
-                                height={80}
+                                width={125}
+                                height={125}
                             />
                             <span className="font-bold text-2xl text-primary bg-clip-text">
                                 MG Properties
