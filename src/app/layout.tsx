@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { PropertiesProvider } from "@/contexts/PropertiesContext";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
     subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({
             <body className={inter.className}>
                 <PropertiesProvider>
                     {children}
+                    <Analytics />
                 </PropertiesProvider>
             </body>
         </html>
