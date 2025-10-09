@@ -241,7 +241,7 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
 												<div className="flex items-center justify-center gap-3 text-slate-700">
 													<Mail className="h-5 w-5 text-primary" />
 													<a
-														href={`mailto:${property.agent.email}`}
+														href={`mailto:${property.agent.email}?subject=Property%20Inquiry`}
 														className="hover:underline"
 													>
 														{property.agent.email}
