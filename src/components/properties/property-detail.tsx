@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { PropertyImageCarousel } from "./property-image-carousel"; // Import the new carousel component
+import Link from "next/link"
 
 interface Property {
 	propertyID: number;
@@ -229,32 +230,46 @@ export function PropertyDetail({ property }: PropertyDetailProps) {
 
 											<div className="space-y-4 mb-8">
 												<div className="flex items-center justify-center gap-3 text-slate-700">
-													<Phone className="h-5 w-5 text-primary" />
-													<span>
-														{property.agent.phone}
-													</span>
+												<Phone className="h-5 w-5 text-primary" />
+												<a
+													href={`tel:${property.agent.phone}`}
+													className="hover:underline"
+												>
+													{property.agent.phone}
+												</a>
 												</div>
 												<div className="flex items-center justify-center gap-3 text-slate-700">
 													<Mail className="h-5 w-5 text-primary" />
-													<span>
+													<a
+														href={`mailto:${property.agent.email}`}
+														className="hover:underline"
+													>
 														{property.agent.email}
-													</span>
+													</a>
 												</div>
 											</div>
 
-											<Button className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-3 font-semibold group">
+											<Button asChild className="w-full bg-gradient-to-r from-primary to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl transition-all rounded-2xl py-3 font-semibold group">
+												<a
+													href={`https://wa.me/${property.agent.phone}?text=Hi%20I'm%20interested%20in%20the%20${property.title}`}
+													target="_blank"
+													rel="noopener noreferrer"
+												>
 												<User className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
 												Contact Agent
+												</a>
 											</Button>
 										</>
 									) : (
 										<div className="text-gray-500">
-											<p>
-												No agent assigned to this
-												property
-											</p>
-											<Button className="w-full mt-4 bg-gradient-to-r from-primary to-primary-600 text-white rounded-2xl py-3">
+											<p>No agent assigned to this property</p>
+											<Button
+												asChild
+												className="w-full mt-4 bg-gradient-to-r from-primary to-primary-600 text-white rounded-2xl py-3"
+											>
+												<Link href="/contact">
 												Contact Us
+												</Link>
 											</Button>
 										</div>
 									)}
