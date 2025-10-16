@@ -1,5 +1,8 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge";
-import { Linkedin } from "lucide-react";
+import { Linkedin, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
 import React from "react";
 import Image from "next/image";
 
@@ -7,7 +10,11 @@ const teamMembers = [
     {
         name: "Mpho Moremong-Gobe",
         role: "Founder & CEO",
-        image: "/placeholder.svg?height=400&width=400",
+        images: [
+            "mgobe.jpg",
+            "mgobe2.png",
+            "mgobe3.png",
+        ],
         bio: "With over 28 years of experience in real estate, Mpho leads our team with vision and expertise. Her work spans property valuations, management, sales, and advisory services, ensuring that clients receive reliable guidance and practical solutions. At MG Properties, Mpho is committed to helping individuals, families, and investors make confident property decisions.",
         email: "mgobe@mgproperties.co.bw",
         // phone: "(555) 123-4567",
@@ -29,6 +36,21 @@ const teamMembers = [
 ];
 
 export function TeamSection() {
+
+    const [ currentImageIndex, setCurrentImageIndex ] = useState(0);
+
+    const nextImage = () => {
+        setCurrentImageIndex((prev) =>
+            prev === teamMembers[0].images.length - 1 ? 0 : prev + 1
+        );
+    };
+
+    const previousImage = () => {
+        setCurrentImageIndex((prev) =>
+            prev === 0 ? teamMembers[0].images.length - 1 : prev - 1
+        );
+    };
+
     return (
         <section className="py-24 bg-gradient-to-b from-green-50/30 to-slate-50 relative overflow-hidden">
             {/* Warm background elements */}
@@ -64,21 +86,59 @@ export function TeamSection() {
                             <React.Fragment key={index}>
                                 {/* Left Column - Image */}
                                 <div className="relative">
-                                    <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-                                        <Image
-                                            src={
-                                                member.image ||
-                                                "/placeholder.svg"
-                                            }
-                                            alt={member.name}
-                                            width={400}
-                                            height={500}
-                                            className="w-full h-[500px] object-cover"
-                                            style={{ objectFit: "cover" }}
-                                            priority
-                                        />
+                                    <div className="relative overflow-hidden rounded-3xl shadow-2xl group">
+                                        <div className="relative w-full h-[650px] rounded-3xl overflow-hidden">
+                                            <Image
+                                                src={
+                                                    member.images[currentImageIndex] ||
+                                                    "/placeholder.svg"
+                                                }
+                                                alt={`${member.name} - Photo ${currentImageIndex + 1}`}
+                                                fill
+                                                /* width={400}
+                                                height={700} */
+                                                /* className="w-full h-[700px] object-cover" */
+                                                style={{ objectFit: "contain", objectPosition: "center top" }}
+                                                quality={50}
+                                                priority
+                                            />
+                                        </div>
+                                       
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                                        {/* Navigation Arrows */}
+                                        {member.images.length > 1 && (
+                                            <>
+                                                <button
+                                                    onClick={previousImage}
+                                                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                                                >
+                                                    <ChevronLeft className="h-6 w-6 text-slate-800" />
+                                                </button>
+                                                <button
+                                                    onClick={nextImage}
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                                                >
+                                                    <ChevronRight className="h-6 w-6 text-slate-800" />
+                                                </button>
+                                            </>
+                                        )}
 
+                                        {/* Dot Indicators */}
+                                        {member.images.length > 1 && (
+                                            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 flex gap-2">
+                                                {member.images.map((_, index) => (
+                                                    <button
+                                                        key={index}
+                                                        onClick={() => setCurrentImageIndex(index)}
+                                                        className={`transition-all rounded-full ${
+                                                            index === currentImageIndex
+                                                                ? 'w-8 h-2 bg-white'
+                                                                : 'w-2 h-2 bg-white/50 hover:bg-white/75'
+                                                        }`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        )}
                                         {/* Floating contact info */}
                                         <div className="absolute bottom-6 left-6 right-6">
                                             <div className="bg-white/90 backdrop-blur-md rounded-2xl p-4">
@@ -96,7 +156,12 @@ export function TeamSection() {
                                                     </div>
                                                     <div className="text-right">
                                                         <div className="text-sm text-slate-700">
-                                                            {member.email}
+                                                            <a
+														        href={`mailto:${member.email}`}
+                                                                className="hover:underline"
+                                                            >
+                                                                {member.email}
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
