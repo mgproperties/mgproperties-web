@@ -47,7 +47,7 @@ export function Footer() {
                             </span> */}
                         </Link>
                         <p className="text-white/70 leading-relaxed">
-                            Your trusted partner in finding the perfect home.
+                            Your trusted partner in all property matters.
                             Professional service with proven results for over 15
                             years.
                         </p>

@@ -11,9 +11,9 @@ const teamMembers = [
         name: "Mpho Moremong-Gobe",
         role: "Founder & CEO",
         images: [
-            "mgobe.jpg",
-            "mgobe2.png",
-            "mgobe3.png",
+            "mgobe.webp",
+            "mgobe2.webp",
+            "mgobe3.webp",
         ],
         bio: "With over 28 years of experience in real estate, Mpho leads our team with vision and expertise. Her work spans property valuations, management, sales, and advisory services, ensuring that clients receive reliable guidance and practical solutions. At MG Properties, Mpho is committed to helping individuals, families, and investors make confident property decisions.",
         email: "mgobe@mgproperties.co.bw",
@@ -85,7 +85,7 @@ export function TeamSection() {
                         {teamMembers.map((member, index) => (
                             <React.Fragment key={index}>
                                 {/* Left Column - Image */}
-                                <div className="relative">
+                                <div className="relative w-[432px]">
                                     <div className="relative overflow-hidden rounded-3xl shadow-2xl group">
                                         <div className="relative w-full h-[650px] rounded-3xl overflow-hidden">
                                             <Image

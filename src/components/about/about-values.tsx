@@ -40,7 +40,7 @@ export function AboutValues() {
                             title: "Trusted & Reliable",
                             description:
                                 "15+ years of proven track record with over 500 successful transactions and 98% client satisfaction rate.",
-                            stats: "500+ Properties Sold",
+                            stats: "5000+ Properties Sold",
                             gradient: "from-primary/10 to-accent/10",
                         },
                         {

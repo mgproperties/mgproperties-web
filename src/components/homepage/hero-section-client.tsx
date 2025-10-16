@@ -41,7 +41,7 @@ export default function HeroSectionClient() {
                     <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-accent to-accent-600 rounded-full text-white font-semibold mb-8 animate-fade-in hover:scale-105 transition-transform cursor-pointer shadow-lg">
                         <div className="w-2 h-2 bg-white rounded-full mr-3 animate-pulse" />
                         🏆 #1 Trusted Real Estate Platform
-                        <ArrowRight className="w-4 h-4 ml-2" />
+                        {/* <ArrowRight className="w-4 h-4 ml-2" /> */}
                     </div>
 
                     {/* Hero Headlines - Editorial Style */}
