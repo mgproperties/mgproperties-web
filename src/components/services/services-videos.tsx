@@ -29,7 +29,7 @@ const videoTestimonials = [
     thumbnail: "https://img.youtube.com/vi/S6y28DAq6r0/maxresdefault.jpg",
     description: "Tebo Keforilwe and Tebogo Maphane take you through the property management process step-by-step.",
   },
-  {
+  /* {
     id: "TM8A_-H4Vdk",
     title: "Legae & Thero",
     client: "Review",
@@ -44,7 +44,7 @@ const videoTestimonials = [
     property: "Interns Review",
     thumbnail: "https://img.youtube.com/vi/CNmXKyEt2wo/maxresdefault.jpg",
     description: "Katso and Kutlo review their time as interns at MG Properties.",
-  },
+  }, */
 ]
 
 export function VideoTestimonials() {
