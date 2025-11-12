@@ -47,9 +47,9 @@ export default function HeroSectionClient() {
                     {/* Hero Headlines - Editorial Style */}
                     <div className="mb-12 animate-fade-in">
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.9] text-white mb-6">
-                            <span className="block">Discover Your</span>
+                            <span className="block">Botswana&apos;s Trusted</span>
                             <span className="block bg-gradient-to-r from-accent via-accent-600 to-accent-700 bg-clip-text text-transparent">
-                                Dream Home
+                                Real Estate Experts
                             </span>
                         </h1>
                         <div className="mt-8 text-xl md:text-2xl text-white/90 font-medium">
