@@ -953,7 +953,50 @@ export function PropertyManagement({
                                     <Label htmlFor="images">
                                         Property Images
                                     </Label>
-                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors"
+                                        
+                                        onDragOver={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}
+                                        
+                                        onDragEnter={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }}
+
+                                        onDrop={async (e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+
+                                            const files = Array.from(e.dataTransfer.files).filter(file =>
+                                                file.type.startsWith('image/')
+                                            );
+
+                                            if (files.length > 0) {
+                                                setIsCompressing(true);
+                                                try {
+                                                    const compressedFiles = await Promise.all(
+                                                        files.map((file) => compressImage(file, 1600, 900, 0.9))
+                                                    )
+                                                    setSelectedFiles([...selectedFiles, ...compressedFiles]);
+
+                                                    const imageUrls = compressedFiles.map((file) =>
+                                                        URL.createObjectURL(file)
+                                                    );
+
+                                                    setNewProperty({
+                                                        ...newProperty,
+                                                        images: [...(newProperty.images || []), ...imageUrls],
+                                                    });
+                                                } finally {
+                                                    setIsCompressing(false);
+                                                }
+                                            }
+                                        }}
+
+
+                                        >
                                         <input
                                             type="file"
                                             id="images"
